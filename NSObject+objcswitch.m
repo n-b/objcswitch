@@ -14,6 +14,9 @@ static void objcswitch(ObjcSwitch * self, SEL _cmd, id arg,...);
 /****************************************************************************/
 #pragma mark -
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wincomplete-implementation"
+
 @implementation ObjcSwitch
 {
     @package
@@ -41,16 +44,11 @@ static void objcswitch(ObjcSwitch * self, SEL _cmd, id arg,...);
         }
             
     }
-    
-//    NSMethodSignature * signature = [NSArray instanceMethodSignatureForSelector:@selector(indexesOfObjectsPassingTest:)];
-//    NSMutableString * types = [NSMutableString string];
-//    for (int i = 0; i<[signature numberOfArguments]; i++) {
-//        [types appendFormat:@"%s",[signature getArgumentTypeAtIndex:i]];
-//    }
-//    NSLog(@"types for initWithFormat: %@ (%@)",types,signature);
     return NO;
 }
 @end
+
+#pragma clang diagnostic pop
 
 /****************************************************************************/
 #pragma mark -

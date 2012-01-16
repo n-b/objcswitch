@@ -11,6 +11,7 @@
 		37A0730814C487BB0094CD27 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37A0730714C487BB0094CD27 /* Cocoa.framework */; };
 		37A0731514C487BB0094CD27 /* objcswitch_tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 37A0731414C487BB0094CD27 /* objcswitch_tests.m */; };
 		37A0731A14C48A890094CD27 /* NSObject+objcswitch.m in Sources */ = {isa = PBXBuildFile; fileRef = 37A072FE14C487960094CD27 /* NSObject+objcswitch.m */; };
+		37A0731C14C4CD980094CD27 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 37A0731B14C4CD980094CD27 /* README.md */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -25,6 +26,7 @@
 		37A0730C14C487BB0094CD27 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		37A0730F14C487BB0094CD27 /* objcswitch_tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "objcswitch_tests-Info.plist"; sourceTree = "<group>"; };
 		37A0731414C487BB0094CD27 /* objcswitch_tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = objcswitch_tests.m; sourceTree = "<group>"; };
+		37A0731B14C4CD980094CD27 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -43,6 +45,7 @@
 		37A072E014C487570094CD27 = {
 			isa = PBXGroup;
 			children = (
+				37A0731B14C4CD980094CD27 /* README.md */,
 				37A072F114C487580094CD27 /* objcswitch */,
 				37A0730D14C487BB0094CD27 /* objcswitch-tests */,
 				37A072EE14C487580094CD27 /* Frameworks */,
@@ -149,6 +152,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				37A0731C14C4CD980094CD27 /* README.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

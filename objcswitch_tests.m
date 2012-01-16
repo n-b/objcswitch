@@ -19,8 +19,12 @@
 {
     BOOL __block success = NO;
     [@"foo" switch:
-     [$Case :@"bar" :^{ STFail(@"foo must be different from bar!"); }],
-     [$Case :@"foo" :^{ success = YES; }],
+     @"bar",^{
+         STFail(@"BAD");
+     },
+     @"foo",^{
+         success = YES;
+     },
      nil];
     STAssertTrue(success, @"foo must equal foo");
 }

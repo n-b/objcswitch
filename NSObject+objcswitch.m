@@ -7,10 +7,55 @@
 //
 
 #import "NSObject+objcswitch.h"
+#import <objc/runtime.h>
 
-@implementation NSObject (objcswitch)
+static void objcswitch(ObjcSwitch * self, SEL _cmd, id arg,...);
 
-- (void) switch:(id)arg, ... 
+/****************************************************************************/
+#pragma mark -
+
+@implementation ObjcSwitch
+{
+    @package
+    id receiver;
+}
+
++ (BOOL)resolveInstanceMethod:(SEL)aSEL
+{
+    NSString * selectorName = NSStringFromSelector(aSEL);
+    NSString * nameTemplate = @"case::";
+
+    if(selectorName.length % nameTemplate.length == 0)
+    {
+        NSUInteger numberOfCases = selectorName.length / nameTemplate.length;
+        NSMutableString * expectedSelectorName = [NSMutableString string];
+        for(int i=0;i<numberOfCases;i++)
+            [expectedSelectorName appendString:nameTemplate];
+        if([selectorName isEqualToString:expectedSelectorName])
+        {
+            NSMutableString * types = [@"v@:" mutableCopy];
+            for(int i=0;i<numberOfCases;i++)
+                [types appendString:@"@@"];
+            class_addMethod([self class], aSEL, (IMP) objcswitch, [types cStringUsingEncoding:NSASCIIStringEncoding]);
+            return YES;
+        }
+            
+    }
+    
+//    NSMethodSignature * signature = [NSArray instanceMethodSignatureForSelector:@selector(indexesOfObjectsPassingTest:)];
+//    NSMutableString * types = [NSMutableString string];
+//    for (int i = 0; i<[signature numberOfArguments]; i++) {
+//        [types appendFormat:@"%s",[signature getArgumentTypeAtIndex:i]];
+//    }
+//    NSLog(@"types for initWithFormat: %@ (%@)",types,signature);
+    return NO;
+}
+@end
+
+/****************************************************************************/
+#pragma mark -
+
+static void objcswitch(ObjcSwitch * self, SEL _cmd, id arg,...)
 {
     id value;
     void (^block)(void);
@@ -21,12 +66,12 @@
     block = va_arg(args, id); // first block
     
 	while (value && block) {
-        if ([self isEqual:value])
+        if ([self->receiver isEqual:value])
         {
             block();
             goto cleanup;
         }
-
+        
         value = va_arg(args, void (^)(void)); // next value
         if(value)
             block = va_arg(args, id); // next block
@@ -36,4 +81,16 @@ cleanup:
 	va_end(args); 
     return;
 }
+
+/****************************************************************************/
+#pragma mark -
+
+@implementation NSObject (objcswitch)
+- (ObjcSwitch *) switch
+{
+    ObjcSwitch * sw_ = [ObjcSwitch new];
+    sw_->receiver = self;
+    return sw_;
+}
 @end
+

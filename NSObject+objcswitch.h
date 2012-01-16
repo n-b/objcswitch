@@ -8,6 +8,21 @@
 
 #import <Foundation/Foundation.h>
 
+@class ObjcSwitch;
+
 @interface NSObject (objcswitch)
-- (void) switch:(id)firstValue, ... NS_REQUIRES_NIL_TERMINATION;
+- (ObjcSwitch *) switch;
+@end
+
+@interface ObjcSwitch : NSObject
+- (void) case:(id)v :(void (^)(void))b;
+- (void) case:(id)v :(void (^)(void))b
+         case:(id)v :(void (^)(void))b;
+- (void) case:(id)v :(void (^)(void))b
+         case:(id)v :(void (^)(void))b
+         case:(id)v :(void (^)(void))b;
+- (void) case:(id)v :(void (^)(void))b
+         case:(id)v :(void (^)(void))b
+         case:(id)v :(void (^)(void))b
+         case:(id)v :(void (^)(void))b;
 @end

@@ -15,18 +15,28 @@
 
 @implementation objcswitch_tests
 
-- (void)testTest
+- (void)testSwitch
 {
     BOOL __block success = NO;
-    [@"foo" switch:
-     @"bar",^{
-         STFail(@"BAD");
-     },
-     @"foo",^{
-         success = YES;
-     },
-     nil];
-    STAssertTrue(success, @"foo must equal foo");
+
+    [[@"foo" switch]
+     case:@"bar" :^{ success = NO; }
+     case:@"foo" :^{ success = YES; }
+     ];
+    STAssertTrue(success,@"bad!");
+
+    [[@"foo" switch]
+     case:@"bar" :^{ success = NO; }
+     case:@"foo" :^{ success = YES; }
+     ];
+    STAssertTrue(success,@"bad!");
+
+    [[@"foo" switch]
+     case:@"bar" :^{ success = NO; }
+     case:@"baz" :^{ success = NO; }
+     case:@"foo" :^{ success = YES; }
+     ];
+    STAssertTrue(success,@"bad!");
 }
 
 @end

@@ -12,11 +12,8 @@
 static void objcswitch(ObjcSwitch * self, SEL _cmd, id arg,...);
 #define SEL_NAME_TEMPLATE "case::"
 #define SEL_NAME_TEMPLATE_LENGTH strlen(SEL_NAME_TEMPLATE)
-
-#define TYPES_PREFIX "v@:"
-#define TYPES_PREFIX_LENGTH strlen(TYPES_PREFIX)
-#define TYPES_TEMPLATE "@@?"
-#define TYPES_TEMPLATE_LENGTH strlen(TYPES_TEMPLATE)
+#define SEL_NAME_SUFFIX "default:"
+#define SEL_NAME_SUFFIX_LENGTH strlen(SEL_NAME_SUFFIX)
 
 /****************************************************************************/
 #pragma mark -
@@ -33,26 +30,35 @@ static void objcswitch(ObjcSwitch * self, SEL _cmd, id arg,...);
 + (BOOL)resolveInstanceMethod:(SEL)aSEL
 {
     const char* selector_name = sel_getName(aSEL);
+    size_t sel_name_length = strlen(selector_name);
 
-    // Check selector is of the form name::name::(etc) 
-    if(strlen(selector_name) % SEL_NAME_TEMPLATE_LENGTH != 0)
-        return NO;
-
-    size_t case_count = strlen(selector_name)/SEL_NAME_TEMPLATE_LENGTH;
-    for(size_t i=0;i<case_count;i++)
+    // Check selector is of the form name::name::(etc)(default:)
+    size_t suffix_length = sel_name_length % SEL_NAME_TEMPLATE_LENGTH;
+    if(suffix_length!=0)
     {
-        if(memcmp(&selector_name[i*SEL_NAME_TEMPLATE_LENGTH], SEL_NAME_TEMPLATE, SEL_NAME_TEMPLATE_LENGTH))
+        if(sel_name_length>=SEL_NAME_TEMPLATE_LENGTH+SEL_NAME_SUFFIX_LENGTH)
+            suffix_length += SEL_NAME_TEMPLATE_LENGTH;
+        if(suffix_length!=SEL_NAME_SUFFIX_LENGTH)
             return NO;
     }
-
-    // Valid selector. Construct types encoding string.
-    char types[TYPES_PREFIX_LENGTH+case_count*TYPES_TEMPLATE_LENGTH+1];
-    memcpy(types,TYPES_PREFIX,TYPES_PREFIX_LENGTH);
-    for(size_t i=0;i<case_count;i++)
-        memcpy(&types[TYPES_PREFIX_LENGTH+i*TYPES_TEMPLATE_LENGTH],TYPES_TEMPLATE,TYPES_TEMPLATE_LENGTH);
-    types[TYPES_PREFIX_LENGTH+case_count*TYPES_TEMPLATE_LENGTH] = 0;
     
-
+    size_t case_count = (sel_name_length-suffix_length)/SEL_NAME_TEMPLATE_LENGTH;
+    for(size_t i=0;i<case_count;i++)
+        if(memcmp(&selector_name[i*SEL_NAME_TEMPLATE_LENGTH], SEL_NAME_TEMPLATE, SEL_NAME_TEMPLATE_LENGTH))
+            return NO;
+    if(suffix_length)
+        if(memcmp(&selector_name[case_count*SEL_NAME_TEMPLATE_LENGTH], SEL_NAME_SUFFIX, SEL_NAME_SUFFIX_LENGTH))
+            return NO;
+    
+    // Valid selector. Construct types encoding string.
+    char types[3+case_count*3+suffix_length?1:0+1];
+    memcpy(types,"v@:",3);
+    for(size_t i=0;i<case_count;i++)
+        memcpy(&types[3+i*3],"@@?",3);
+    if(suffix_length)
+        types[3+case_count*3] = '@';
+    types[3+case_count*3+suffix_length?1:0] = 0;
+    
     class_addMethod([self class], aSEL, (IMP) objcswitch, types);
     return YES;
 }
@@ -66,7 +72,16 @@ static void objcswitch(ObjcSwitch * self, SEL _cmd, id arg,...);
 static void objcswitch(ObjcSwitch * self, SEL _cmd, id arg,...)
 {
     const char* selector_name = sel_getName(_cmd);
-    size_t case_count = strlen(selector_name)/strlen(SEL_NAME_TEMPLATE);
+    size_t sel_name_length = strlen(selector_name);
+    size_t suffix_length = sel_name_length % SEL_NAME_TEMPLATE_LENGTH;
+    if(suffix_length!=0)
+    {
+        if(sel_name_length>=SEL_NAME_TEMPLATE_LENGTH+SEL_NAME_SUFFIX_LENGTH)
+            suffix_length += SEL_NAME_TEMPLATE_LENGTH;
+    }
+    size_t case_count = (sel_name_length-suffix_length)/SEL_NAME_TEMPLATE_LENGTH;
+    
+    assert(suffix_length==0 || suffix_length==SEL_NAME_SUFFIX_LENGTH);
     
     id value;
     void (^block)(void);
@@ -74,19 +89,27 @@ static void objcswitch(ObjcSwitch * self, SEL _cmd, id arg,...)
     
 	va_start(args, arg);
     value = arg; // first value
-    block = va_arg(args, void (^)(void)); // first block
     
     for (size_t i=0; i<case_count; i++)
     {
+        if(i==0)
+            value = arg;
+        else
+            value = va_arg(args, id);
+        block = va_arg(args, void (^)(void));
+
         if ([self->receiver isEqual:value])
         {
             block();
             goto cleanup;
         }
-        
-        value = va_arg(args, id); // next value
-        block = va_arg(args, void (^)(void)); // next block
 	}
+
+    if(suffix_length) // default case
+    {
+        block = va_arg(args, void (^)(void));
+        block();
+    }
     
 cleanup:
 	va_end(args); 

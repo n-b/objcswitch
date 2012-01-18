@@ -25,4 +25,16 @@
          case:(id)v :(void (^)(void))b
          case:(id)v :(void (^)(void))b
          case:(id)v :(void (^)(void))b;
+
+
+- (void) case:(id)v :(void (^)(void))b default:(void (^)(void))b;
+- (void) case:(id)v :(void (^)(void))b
+         case:(id)v :(void (^)(void))b default:(void (^)(void))b;
+- (void) case:(id)v :(void (^)(void))b
+         case:(id)v :(void (^)(void))b
+         case:(id)v :(void (^)(void))b default:(void (^)(void))b;
+- (void) case:(id)v :(void (^)(void))b
+         case:(id)v :(void (^)(void))b
+         case:(id)v :(void (^)(void))b
+         case:(id)v :(void (^)(void))b default:(void (^)(void))b;
 @end

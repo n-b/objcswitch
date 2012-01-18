@@ -10,6 +10,7 @@
 #import <objc/runtime.h>
 
 static void objcswitch(ObjcSwitch * self, SEL _cmd, id arg,...);
+#define SEL_NAME_TEMPLATE "case::"
 
 /****************************************************************************/
 #pragma mark -
@@ -26,7 +27,7 @@ static void objcswitch(ObjcSwitch * self, SEL _cmd, id arg,...);
 + (BOOL)resolveInstanceMethod:(SEL)aSEL
 {
     NSString * selectorName = NSStringFromSelector(aSEL);
-    NSString * nameTemplate = @"case::";
+    NSString * nameTemplate = @SEL_NAME_TEMPLATE;
 
     if(selectorName.length % nameTemplate.length == 0)
     {
@@ -55,6 +56,9 @@ static void objcswitch(ObjcSwitch * self, SEL _cmd, id arg,...);
 
 static void objcswitch(ObjcSwitch * self, SEL _cmd, id arg,...)
 {
+    const char* selector_name = sel_getName(_cmd);
+    size_t case_count = strlen(selector_name)/strlen(SEL_NAME_TEMPLATE);
+    
     id value;
     void (^block)(void);
 	va_list args;
@@ -63,7 +67,8 @@ static void objcswitch(ObjcSwitch * self, SEL _cmd, id arg,...)
     value = arg; // first value
     block = va_arg(args, void (^)(void)); // first block
     
-	while (value && block) {
+    for (size_t i=0; i<case_count; i++)
+    {
         if ([self->receiver isEqual:value])
         {
             block();
@@ -71,8 +76,7 @@ static void objcswitch(ObjcSwitch * self, SEL _cmd, id arg,...)
         }
         
         value = va_arg(args, id); // next value
-        if(value)
-            block = va_arg(args, void (^)(void)); // next block
+        block = va_arg(args, void (^)(void)); // next block
 	}
     
 cleanup:

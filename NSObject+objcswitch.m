@@ -38,7 +38,7 @@ static void objcswitch(ObjcSwitch * self, SEL _cmd, id arg,...);
         {
             NSMutableString * types = [@"v@:" mutableCopy];
             for(int i=0;i<numberOfCases;i++)
-                [types appendString:@"@@"];
+                [types appendString:@"@@?"];
             class_addMethod([self class], aSEL, (IMP) objcswitch, [types cStringUsingEncoding:NSASCIIStringEncoding]);
             return YES;
         }
@@ -61,7 +61,7 @@ static void objcswitch(ObjcSwitch * self, SEL _cmd, id arg,...)
     
 	va_start(args, arg);
     value = arg; // first value
-    block = va_arg(args, id); // first block
+    block = va_arg(args, void (^)(void)); // first block
     
 	while (value && block) {
         if ([self->receiver isEqual:value])
@@ -70,9 +70,9 @@ static void objcswitch(ObjcSwitch * self, SEL _cmd, id arg,...)
             goto cleanup;
         }
         
-        value = va_arg(args, void (^)(void)); // next value
+        value = va_arg(args, id); // next value
         if(value)
-            block = va_arg(args, id); // next block
+            block = va_arg(args, void (^)(void)); // next block
 	}
     
 cleanup:

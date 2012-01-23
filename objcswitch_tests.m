@@ -6,9 +6,9 @@
 //  Copyright (c) 2012 Visuamobile. All rights reserved.
 //
 
-#import "NSObject+objcswitch.h"
 #import <SenTestingKit/SenTestingKit.h>
 #import <objc/runtime.h>
+#import "NSObject+objcswitch.h"
 
 
 @interface objcswitch_tests : SenTestCase
@@ -86,3 +86,8 @@
 }
 
 @end
+
+// Only needed to compile objcswitch_tests_build to use Xcode's "Generate Preprocessed File"
+int main()
+{
+}

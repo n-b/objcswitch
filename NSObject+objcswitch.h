@@ -5,6 +5,15 @@
 //  Created by Nicolas Bouilleaud on 16/01/12.
 //  Copyright (c) 2012 Nicolas Bouilleaud. All rights reserved.
 //
+//  An experimental switch/case construct for objective-C objects.
+//  Use it like that : 
+//  
+//  [[@"foo" switch]
+//   case:@"bar" :^{ success = NO; }
+//   case:@"baz" :^{ success = NO; }
+//   case:@"foo" :^{ success = YES; }
+//  ];
+//
 
 #import <Foundation/Foundation.h>
 
@@ -17,9 +26,28 @@
 
 @interface ObjcSwitch : NSObject
 
-// The method's implementation is actually defined at runtime.
-// A bunch of method prototypes is actually define here.
-#define OBJCSWITCH_MAX_DEPTH 	10 // Actually a bit less, depending on how you #import this file
+/* The method's implementation is actually defined at runtime.
+ * The bunch of methods is declared here, through recursive #includes
+ *
+ * The declared methods look like :
+
+- (void) case:(id)v :(void (^)(void))b
+         case:(id)v :(void (^)(void))b
+          ...
+      default:(void (^)(void))b;
+ 
+ * and :
+ 
+- (void) case:(id)v :(void (^)(void))b
+         case:(id)v :(void (^)(void))b
+          ...
+ 			;
+ 
+ * with or without the default: case,
+ * and with up to (a bit less than) OBJCSWITCH_MAX_CASE_COUNT cases.
+ * The exact count depends on how you #import this header.
+ */
+#define OBJCSWITCH_MAX_CASE_COUNT 	32
 
 #define OBJCSWITCH_FIRST_LINE	- (void) case:(id)v :(void (^)(void))b
 #define OBJCSWITCH_CASE_LINE	         case:(id)v :(void (^)(void))b

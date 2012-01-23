@@ -10,22 +10,24 @@
 
 @class ObjcSwitch;
 
+// Return the switch object, which implements the actual case::case:: methods
 @interface NSObject (objcswitch)
 - (ObjcSwitch *) switch;
 @end
 
-
 @interface ObjcSwitch : NSObject
-#define OBJCSWITCH_BASE_INCLUDE_LEVEL __INCLUDE_LEVEL__
-#define OBJCSWITCH_MAX_CASE_COUNT 10
 
-#define OBJCSWITCH_FIRST_LINE		- (void) case:(id)v :(void (^)(void))b
-#define OBJCSWITCH_CASE_LINE		         case:(id)v :(void (^)(void))b
+// The method's implementation is actually defined at runtime.
+// A bunch of method prototypes is actually define here.
+#define OBJCSWITCH_MAX_DEPTH 	10 // Actually a bit less, depending on how you #import this file
 
-#define OBJCSWITCH_LAST_LINE		      default:(void (^)(void))b;
+#define OBJCSWITCH_FIRST_LINE	- (void) case:(id)v :(void (^)(void))b
+#define OBJCSWITCH_CASE_LINE	         case:(id)v :(void (^)(void))b
+
+#define OBJCSWITCH_LAST_LINE	      default:(void (^)(void))b;
 	#include "objcswitch_switch.def.h"
 #undef OBJCSWITCH_LAST_LINE
-#define OBJCSWITCH_LAST_LINE		      ;
+#define OBJCSWITCH_LAST_LINE	      ;
 	#include "objcswitch_switch.def.h"
 
 @end

@@ -14,27 +14,18 @@
 - (ObjcSwitch *) switch;
 @end
 
+
 @interface ObjcSwitch : NSObject
-- (void) case:(id)v :(void (^)(void))b;
-- (void) case:(id)v :(void (^)(void))b
-         case:(id)v :(void (^)(void))b;
-- (void) case:(id)v :(void (^)(void))b
-         case:(id)v :(void (^)(void))b
-         case:(id)v :(void (^)(void))b;
-- (void) case:(id)v :(void (^)(void))b
-         case:(id)v :(void (^)(void))b
-         case:(id)v :(void (^)(void))b
-         case:(id)v :(void (^)(void))b;
+#define OBJCSWITCH_BASE_INCLUDE_LEVEL __INCLUDE_LEVEL__
+#define OBJCSWITCH_MAX_CASE_COUNT 10
 
+#define OBJCSWITCH_FIRST_LINE		- (void) case:(id)v :(void (^)(void))b
+#define OBJCSWITCH_CASE_LINE		         case:(id)v :(void (^)(void))b
 
-- (void) case:(id)v :(void (^)(void))b default:(void (^)(void))b;
-- (void) case:(id)v :(void (^)(void))b
-         case:(id)v :(void (^)(void))b default:(void (^)(void))b;
-- (void) case:(id)v :(void (^)(void))b
-         case:(id)v :(void (^)(void))b
-         case:(id)v :(void (^)(void))b default:(void (^)(void))b;
-- (void) case:(id)v :(void (^)(void))b
-         case:(id)v :(void (^)(void))b
-         case:(id)v :(void (^)(void))b
-         case:(id)v :(void (^)(void))b default:(void (^)(void))b;
+#define OBJCSWITCH_LAST_LINE		      default:(void (^)(void))b;
+	#include "objcswitch_switch.def.h"
+#undef OBJCSWITCH_LAST_LINE
+#define OBJCSWITCH_LAST_LINE		      ;
+	#include "objcswitch_switch.def.h"
+
 @end

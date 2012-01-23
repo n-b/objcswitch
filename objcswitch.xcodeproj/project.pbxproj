@@ -7,23 +7,21 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		373D21D114CE13F900C039BF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37A072EF14C487580094CD27 /* Foundation.framework */; };
 		37A0730614C487BB0094CD27 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37A0730514C487BB0094CD27 /* SenTestingKit.framework */; };
-		37A0730814C487BB0094CD27 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37A0730714C487BB0094CD27 /* Cocoa.framework */; };
 		37A0731514C487BB0094CD27 /* objcswitch_tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 37A0731414C487BB0094CD27 /* objcswitch_tests.m */; };
 		37A0731A14C48A890094CD27 /* NSObject+objcswitch.m in Sources */ = {isa = PBXBuildFile; fileRef = 37A072FE14C487960094CD27 /* NSObject+objcswitch.m */; };
 		37A0731C14C4CD980094CD27 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 37A0731B14C4CD980094CD27 /* README.md */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		371C912E14CDD60400617D4C /* objcswitch_case.def.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = objcswitch_case.def.h; sourceTree = SOURCE_ROOT; };
+		371C912F14CDD61600617D4C /* objcswitch_switch.def.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = objcswitch_switch.def.h; sourceTree = SOURCE_ROOT; };
 		37A072EF14C487580094CD27 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		37A072FD14C487960094CD27 /* NSObject+objcswitch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSObject+objcswitch.h"; sourceTree = SOURCE_ROOT; };
 		37A072FE14C487960094CD27 /* NSObject+objcswitch.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSObject+objcswitch.m"; sourceTree = SOURCE_ROOT; };
 		37A0730414C487BB0094CD27 /* objcswitch_tests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = objcswitch_tests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		37A0730514C487BB0094CD27 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
-		37A0730714C487BB0094CD27 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
-		37A0730A14C487BB0094CD27 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
-		37A0730B14C487BB0094CD27 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
-		37A0730C14C487BB0094CD27 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		37A0730F14C487BB0094CD27 /* objcswitch_tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "objcswitch_tests-Info.plist"; sourceTree = "<group>"; };
 		37A0731414C487BB0094CD27 /* objcswitch_tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = objcswitch_tests.m; sourceTree = "<group>"; };
 		37A0731B14C4CD980094CD27 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = SOURCE_ROOT; };
@@ -35,7 +33,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				37A0730614C487BB0094CD27 /* SenTestingKit.framework in Frameworks */,
-				37A0730814C487BB0094CD27 /* Cocoa.framework in Frameworks */,
+				373D21D114CE13F900C039BF /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -66,8 +64,6 @@
 			children = (
 				37A072EF14C487580094CD27 /* Foundation.framework */,
 				37A0730514C487BB0094CD27 /* SenTestingKit.framework */,
-				37A0730714C487BB0094CD27 /* Cocoa.framework */,
-				37A0730914C487BB0094CD27 /* Other Frameworks */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -76,19 +72,11 @@
 			isa = PBXGroup;
 			children = (
 				37A072FD14C487960094CD27 /* NSObject+objcswitch.h */,
+				371C912F14CDD61600617D4C /* objcswitch_switch.def.h */,
+				371C912E14CDD60400617D4C /* objcswitch_case.def.h */,
 				37A072FE14C487960094CD27 /* NSObject+objcswitch.m */,
 			);
 			path = objcswitch;
-			sourceTree = "<group>";
-		};
-		37A0730914C487BB0094CD27 /* Other Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				37A0730A14C487BB0094CD27 /* AppKit.framework */,
-				37A0730B14C487BB0094CD27 /* CoreData.framework */,
-				37A0730C14C487BB0094CD27 /* Foundation.framework */,
-			);
-			name = "Other Frameworks";
 			sourceTree = "<group>";
 		};
 		37A0730D14C487BB0094CD27 /* objcswitch-tests */ = {
@@ -273,6 +261,7 @@
 				37A0731914C487BB0094CD27 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

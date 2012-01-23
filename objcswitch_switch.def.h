@@ -1,0 +1,8 @@
+#define OBJCSWITCH_CASE_COUNT OBJCSWITCH_MAX_CASE_COUNT+1
+OBJCSWITCH_FIRST_LINE
+#include "objcswitch_case.def.h"
+OBJCSWITCH_LAST_LINE
+#undef OBJCSWITCH_CASE_COUNT
+#if __INCLUDE_LEVEL__ < OBJCSWITCH_MAX_CASE_COUNT
+#include "objcswitch_switch.def.h"
+#endif

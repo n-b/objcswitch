@@ -11,9 +11,7 @@
 
 static void objcswitch(ObjcSwitch * self, SEL _cmd, id arg,...);
 #define SEL_NAME_TEMPLATE "case::"
-#define SEL_NAME_TEMPLATE_LENGTH strlen(SEL_NAME_TEMPLATE)
 #define SEL_NAME_SUFFIX "default:"
-#define SEL_NAME_SUFFIX_LENGTH strlen(SEL_NAME_SUFFIX)
 
 /****************************************************************************/
 #pragma mark -
@@ -33,21 +31,21 @@ static void objcswitch(ObjcSwitch * self, SEL _cmd, id arg,...);
     size_t sel_name_length = strlen(selector_name);
 
     // Check selector is of the form name::name::(etc)(default:)
-    size_t suffix_length = sel_name_length % SEL_NAME_TEMPLATE_LENGTH;
+    size_t suffix_length = sel_name_length % strlen(SEL_NAME_TEMPLATE);
     if(suffix_length!=0)
     {
-        if(sel_name_length>=SEL_NAME_TEMPLATE_LENGTH+SEL_NAME_SUFFIX_LENGTH)
-            suffix_length += SEL_NAME_TEMPLATE_LENGTH;
-        if(suffix_length!=SEL_NAME_SUFFIX_LENGTH)
+        if(sel_name_length>=strlen(SEL_NAME_TEMPLATE)+strlen(SEL_NAME_SUFFIX))
+            suffix_length += strlen(SEL_NAME_TEMPLATE);
+        if(suffix_length!=strlen(SEL_NAME_SUFFIX))
             return NO;
     }
     
-    size_t case_count = (sel_name_length-suffix_length)/SEL_NAME_TEMPLATE_LENGTH;
+    size_t case_count = (sel_name_length-suffix_length)/strlen(SEL_NAME_TEMPLATE);
     for(size_t i=0;i<case_count;i++)
-        if(memcmp(&selector_name[i*SEL_NAME_TEMPLATE_LENGTH], SEL_NAME_TEMPLATE, SEL_NAME_TEMPLATE_LENGTH))
+        if(memcmp(&selector_name[i*strlen(SEL_NAME_TEMPLATE)], SEL_NAME_TEMPLATE, strlen(SEL_NAME_TEMPLATE)))
             return NO;
     if(suffix_length)
-        if(memcmp(&selector_name[case_count*SEL_NAME_TEMPLATE_LENGTH], SEL_NAME_SUFFIX, SEL_NAME_SUFFIX_LENGTH))
+        if(memcmp(&selector_name[case_count*strlen(SEL_NAME_TEMPLATE)], SEL_NAME_SUFFIX, strlen(SEL_NAME_SUFFIX)))
             return NO;
     
     // Valid selector. Construct types encoding string.
@@ -73,15 +71,15 @@ static void objcswitch(ObjcSwitch * self, SEL _cmd, id arg,...)
 {
     const char* selector_name = sel_getName(_cmd);
     size_t sel_name_length = strlen(selector_name);
-    size_t suffix_length = sel_name_length % SEL_NAME_TEMPLATE_LENGTH;
+    size_t suffix_length = sel_name_length % strlen(SEL_NAME_TEMPLATE);
     if(suffix_length!=0)
     {
-        if(sel_name_length>=SEL_NAME_TEMPLATE_LENGTH+SEL_NAME_SUFFIX_LENGTH)
-            suffix_length += SEL_NAME_TEMPLATE_LENGTH;
+        if(sel_name_length>=strlen(SEL_NAME_TEMPLATE)+strlen(SEL_NAME_SUFFIX))
+            suffix_length += strlen(SEL_NAME_TEMPLATE);
     }
-    size_t case_count = (sel_name_length-suffix_length)/SEL_NAME_TEMPLATE_LENGTH;
+    size_t case_count = (sel_name_length-suffix_length)/strlen(SEL_NAME_TEMPLATE);
     
-    assert(suffix_length==0 || suffix_length==SEL_NAME_SUFFIX_LENGTH);
+    assert(suffix_length==0 || suffix_length==strlen(SEL_NAME_SUFFIX));
     
     id value;
     void (^block)(void);

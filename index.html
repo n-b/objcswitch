@@ -1,1 +1,250 @@
-My GitHub Page
+<!DOCTYPE html><html>
+<head>
+<title>Cocoaheads Smalltalk : Tagged Pointers</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<script src="https://github.com/downloads/gnab/remark/remark-0.3.5.min.js" type="text/javascript"></script>
+<style type="text/css" media="screen">
+	@import url(http://fonts.googleapis.com/css?family=Quattrocento+Sans:400,700);
+	@import url(http://fonts.googleapis.com/css?family=Arvo:700italic);
+
+	h1, h2 {
+	  font-family: 'Quattrocento Sans', sans-serif;
+	  font-weight: bold;
+	}
+	p {
+	  font-family: 'Quattrocento Sans', sans-serif;
+	}
+	a {
+	  color: #a86;
+	  text-decoration: none;
+	}
+	.center {
+	  margin: 0 auto;
+	}
+	.footnote {
+	  position: absolute;
+	  bottom: 3em;
+	}
+	pre {
+	  border-left: 0.4em solid #d7d7d7;
+	  padding-left: 0.5em;
+	}
+	code {
+	  background: #f4f4f4 !important;
+	}
+	.position {
+	  visibility: hidden;
+	}
+</style>
+</head><body><textarea id="source">
+
+
+.center.middle
+## Cocoaheads Smalltalk
+# objcswitch
+
+---
+# C-like Switch
+
+	.c
+	int i = ...;
+	switch(i){
+		case 1: ...;
+		case 2: ...;
+		case 3: ...;
+	}
+
+&nbsp;	
+
+	.objectivec
+	id obj = ...;
+	[[obj switch]
+	 case:@"a" :^{ ... }
+	 case:@"b" :^{ ... }
+	 case:@"c" :^{ ... }
+	 ];
+&nbsp;
+	.objectivec
+	id obj = ...;
+	[[obj switch]
+	 case:@"abc" :^{ ... }
+	 case:@123 :^{ ... }
+	 case:@{@"a",@"b"} :^{ ... }
+	 ];
+
+---
+# Objectif
+
+	.objectivec
+	id obj = ...;
+	[[obj switch]
+	 case:... :^{ ... }
+	 ...
+	 default:^{ ... }
+	 ];
+
+---
+# Testing
+
+	.objectivec
+    STAssertTrue([[@"foo" switch] respondsToSelector:
+	              @selector(case::default:)], nil);
+&nbsp;
+
+	.objectivec
+    STAssertTrue([[@"foo" switch] respondsToSelector:
+	              @selector(case::case::default:)], nil);
+
+---
+# Testing
+
+	.objectivec
+    BOOL __block success = NO;
+	[[@"foo" switch]
+		case:@"bar" :^{ success = NO; }
+		case:@"foo" :^{ success = YES; }
+	];
+    STAssertTrue(success,@"bad!");
+
+---
+# Testing
+
+	.objectivec
+	BOOL __block success = NO;
+	[[@"foo" switch]
+		case:@"bar" :^{ success = NO; }
+		case:@"baz" :^{ success = NO; }
+		default:^{ success = YES;}
+	];
+	STAssertTrue(success,nil);
+
+---
+# Interface
+
+	.objectivec
+	@class ObjcSwitch;
+
+	// Return the switch object, which implements the actual case::case:: methods
+	@interface NSObject (objcswitch)
+	- (ObjcSwitch *) switch;
+	@end
+
+	@interface ObjcSwitch : NSObject
+	...
+	@end
+
+---
+# Implementation
+
+	.objectivec
+	@implementation NSObject (objcswitch)
+	- (ObjcSwitch *) switch
+	{
+	    ObjcSwitch * sw_ = [ObjcSwitch new];
+	    sw_->receiver = self;
+	    return sw_;
+	}
+	@end
+
+---
+# resolveInstanceMethod
+
+	.objectivec
+	#define SEL_NAME_TEMPLATE "case::"
+	#define SEL_NAME_SUFFIX "default:"
+	
+	+ (BOOL)resolveInstanceMethod:(SEL)aSEL
+	{
+	    const char* selector_name = sel_getName(aSEL);
+	    size_t sel_name_length = strlen(selector_name);
+
+	    // Check selector is of the form name::name::(etc)(default:)
+	    size_t suffix_length = sel_name_length % SEL_NAME_TEMPLATE_LENGTH;
+	    if(suffix_length!=0)
+	    {
+	        if(sel_name_length>=SEL_NAME_TEMPLATE_LENGTH+SEL_NAME_SUFFIX_LENGTH)
+	            suffix_length += SEL_NAME_TEMPLATE_LENGTH;
+	        if(suffix_length!=SEL_NAME_SUFFIX_LENGTH)
+	            return NO;
+	    }
+    
+	    size_t case_count = (sel_name_length-suffix_length)/SEL_NAME_TEMPLATE_LENGTH;
+	    for(size_t i=0;i<case_count;i++)
+	        if(memcmp(&selector_name[i*SEL_NAME_TEMPLATE_LENGTH], SEL_NAME_TEMPLATE, SEL_NAME_TEMPLATE_LENGTH))
+	            return NO;
+	    if(suffix_length)
+	        if(memcmp(&selector_name[case_count*SEL_NAME_TEMPLATE_LENGTH], SEL_NAME_SUFFIX, SEL_NAME_SUFFIX_LENGTH))
+	            return NO;
+    
+	    // Valid selector. Construct types encoding string.
+	    char types[3+case_count*3+suffix_length?1:0+1];
+	    memcpy(types,"v@:",3);
+	    for(size_t i=0;i<case_count;i++)
+	        memcpy(&types[3+i*3],"@@?",3);
+	    if(suffix_length)
+	        types[3+case_count*3] = '@';
+	    types[3+case_count*3+suffix_length?1:0] = 0;
+    
+	    class_addMethod([self class], aSEL, (IMP) objcswitch, types);
+	    return YES;
+	}
+
+<-- 
+* clang optimizes strlen at compile-time
+* sel_getName returns son argument
+* @encode
+* à l'appel suivant pour le même nombre d'arguments, la méthode existera déjà
+* mais, (IMP) objcswitch ? 
+ -fonction C
+-->
+
+---
+# objcswitch(id,SEL,...)
+
+	.objectivec
+	static void objcswitch(ObjcSwitch * self, SEL _cmd, NSUInteget caseCount, BOOL hasDefaultBlock,...)
+<--
+* refaire une implémentation qui passe en argument le nombre de cas et la présence de défault.
+* ça doit être possible en passant un block??? 
+
+* C variadics
+-->
+
+---
+# Declaration
+
+	.objectivec
+	#define OBJCSWITCH_MAX_CASE_COUNT 	32
+
+	#define OBJCSWITCH_FIRST_LINE	- (void) case:(id)v :(void (^)(void))b
+	#define OBJCSWITCH_CASE_LINE	         case:(id)v :(void (^)(void))b
+
+	#define OBJCSWITCH_LAST_LINE	      default:(void (^)(void))b;
+		#include "objcswitch_switch.def.h"
+	#undef OBJCSWITCH_LAST_LINE
+	#define OBJCSWITCH_LAST_LINE	      ;
+		#include "objcswitch_switch.def.h"
+&nbsp;
+
+	//objcswitch_switch.def.h
+	#if __INCLUDE_LEVEL__ < OBJCSWITCH_MAX_CASE_COUNT
+	OBJCSWITCH_FIRST_LINE
+	#include "objcswitch_case.def.h"
+	OBJCSWITCH_LAST_LINE
+	#include "objcswitch_switch.def.h"
+	#endif
+&nbsp;
+
+	//objcswitch_case.def.h
+	#if __INCLUDE_LEVEL__ < OBJCSWITCH_MAX_CASE_COUNT
+	OBJCSWITCH_CASE_LINE
+	#include "objcswitch_case.def.h"
+	#endif
+
+<--
+* ne sert qu'à enlever les warnings
+* #pragma clang diagnostic ignored "-Wincomplete-implementation"
+
+-->
+
+</textarea><div id="slideshow"></div></body></html>

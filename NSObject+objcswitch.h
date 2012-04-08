@@ -5,24 +5,19 @@
 //  Created by Nicolas Bouilleaud on 16/01/12.
 //  Copyright (c) 2012 Nicolas Bouilleaud. All rights reserved.
 //
-//  An experimental switch/case construct for objective-C objects.
-//  Use it like that : 
-//  
-//  [[@"foo" switch]
-//   case:@"bar" :^{ success = NO; }
-//   case:@"baz" :^{ success = NO; }
-//   case:@"foo" :^{ success = YES; }
-//  ];
-//
 
 #import <Foundation/Foundation.h>
 
-@class ObjcSwitch;
-
-// Return the switch object, which implements the actual case::case:: methods
-@interface NSObject (objcswitch)
-- (ObjcSwitch *) switch;
-@end
+/*
+ *  This is an experimental switch/case construct for objective-C objects.
+ *  Use it like that :
+ *
+ *  [[@"foo" switch]
+ *   case:@"bar" :^{ success = NO; }
+ *   case:@"baz" :^{ success = NO; }
+ *   case:@"foo" :^{ success = YES; }
+ *  ];
+ */
 
 @interface ObjcSwitch : NSObject
 
@@ -67,4 +62,11 @@
 #define OBJCSWITCH_DEFAULT_BLOCK FALSE
 #include "objcswitch_switch.def.h"
 
+@end
+
+/*
+ * Return the switch object, which implements the actual case::case:: methods
+ */
+@interface NSObject (objcswitch)
+- (ObjcSwitch *) switch;
 @end

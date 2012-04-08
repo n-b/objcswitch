@@ -34,20 +34,23 @@ static void objcswitch(ObjcSwitch * self, SEL _cmd, ...);
 {
     const char* selector = sel_getName(aSEL);
 
-    // Check selector is of the form case::case::default: or case::case::
+    // Check selector has a valid length,
+    // count the probable number of args and
+    // find whether there's a default block.
     BOOL hasDefaultBlock = (strlen(selector) % strlen(CASE__)) != 0;
     if(hasDefaultBlock &&
        strlen(selector)%strlen(CASE__) != strlen(DEFAULT_)-strlen(CASE__) )
         return NO;
-    
     size_t caseCount = (strlen(selector)-(hasDefaultBlock?strlen(DEFAULT_):0)) / strlen(CASE__);
     
+    // Check selector looks like "case::case::"...
     for(size_t i=0;i<caseCount;i++)
-        if(memcmp(&selector[i*strlen(CASE__)], CASE__, strlen(CASE__)))
+        if(memcmp(selector + i*strlen(CASE__), CASE__, strlen(CASE__)))
             return NO;
 
+    // Check it ends with "default:"
     if(hasDefaultBlock &&
-       memcmp(&selector[caseCount*strlen(CASE__)], DEFAULT_, strlen(DEFAULT_)))
+       memcmp(selector + caseCount*strlen(CASE__), DEFAULT_, strlen(DEFAULT_)))
             return NO;
     
     // Selector string is what we expect. Construct types encoding string.
@@ -84,7 +87,10 @@ static void objcswitch(ObjcSwitch * self, SEL _cmd, ...);
 // and find if there's a "default" block.
 static void objcswitch(ObjcSwitch * self, SEL _cmd, ...)
 {
-    // find out number of arguments
+	va_list args;
+	va_start(args, _cmd);
+
+    // Find out number of arguments in our va_list
     const char* selector = sel_getName(_cmd);
     BOOL hasDefaultBlock = (strlen(selector) % strlen(CASE__)) != 0;
     size_t caseCount = (strlen(selector)-(hasDefaultBlock?strlen(DEFAULT_):0)) / strlen(CASE__);
@@ -92,8 +98,6 @@ static void objcswitch(ObjcSwitch * self, SEL _cmd, ...)
 
     // loop for each "case"
     // (object,block) pair of arguments
-	va_list args;
-	va_start(args, _cmd);
     for (size_t i=0; i<caseCount; i++)
     {
         id value = va_arg(args, id);

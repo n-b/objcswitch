@@ -9,46 +9,48 @@
 #import "NSObject+objcswitch.h"
 #import <objc/runtime.h>
 
-static void objcswitch(ObjcSwitch * self, SEL _cmd, id arg,...);
+// Implementation function declaration
+static void objcswitch(ObjcSwitch * self, SEL _cmd, ...);
+
+// Selector name templates
 #define CASE__ "case::"
 #define DEFAULT_ "default:"
 
-/****************************************************************************/
-#pragma mark -
-
+// Of course, ObjcSwitch does not define implementation for all
+// the selectors declared in the .h.
+// Shut up that warning.
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wincomplete-implementation"
 
 @implementation ObjcSwitch
 {
-    @package
+    // The ObjcSwitch object acts as a trampoline for the object it was created with.
+    // Make the receiver ivar public so that everyone in the implementation can use it.
+    @public
     id receiver;
 }
 
 + (BOOL)resolveInstanceMethod:(SEL)aSEL
 {
-    const char* selector_name = sel_getName(aSEL);
-    size_t sel_name_length = strlen(selector_name);
+    const char* selector = sel_getName(aSEL);
 
-    // Check selector is of the form name::name::(etc)(default:)
-    size_t suffix_length = sel_name_length % strlen(CASE__);
-    if(suffix_length!=0)
-    {
-        if(sel_name_length>=strlen(CASE__)+strlen(DEFAULT_))
-            suffix_length += strlen(CASE__);
-        if(suffix_length!=strlen(DEFAULT_))
-            return NO;
-    }
+    // Check selector is of the form case::case::default: or case::case::
+    BOOL hasDefaultBlock = (strlen(selector) % strlen(CASE__)) != 0;
+    if(hasDefaultBlock &&
+       strlen(selector)%strlen(CASE__) != strlen(DEFAULT_)-strlen(CASE__) )
+        return NO;
     
-    size_t case_count = (sel_name_length-suffix_length)/strlen(CASE__);
-    for(size_t i=0;i<case_count;i++)
-        if(memcmp(&selector_name[i*strlen(CASE__)], CASE__, strlen(CASE__)))
+    size_t caseCount = (strlen(selector)-(hasDefaultBlock?strlen(DEFAULT_):0)) / strlen(CASE__);
+    
+    for(size_t i=0;i<caseCount;i++)
+        if(memcmp(&selector[i*strlen(CASE__)], CASE__, strlen(CASE__)))
             return NO;
-    if(suffix_length)
-        if(memcmp(&selector_name[case_count*strlen(CASE__)], DEFAULT_, strlen(DEFAULT_)))
+
+    if(hasDefaultBlock &&
+       memcmp(&selector[caseCount*strlen(CASE__)], DEFAULT_, strlen(DEFAULT_)))
             return NO;
     
-    // Valid selector. Construct types encoding string.
+    // Selector string is what we expect. Construct types encoding string.
     //
     // types looks like : v@:@@?@@?@@?@
     // where :
@@ -57,75 +59,69 @@ static void objcswitch(ObjcSwitch * self, SEL _cmd, id arg,...);
     //  - @@: is for each case
     //   - @ for the object
     //   - @? for the block
-    //  - @? is for the last ("default") block --> bug?
-    char types[3+case_count*3+suffix_length?1:0+1];
-    memcpy(types,"v@:",3);
-    for(size_t i=0;i<case_count;i++)
-        memcpy(&types[3+i*3],"@@?",3);
-    if(suffix_length)
-        types[3+case_count*3] = '@';
-    types[3+case_count*3+suffix_length?1:0] = 0;
-    
-    class_addMethod([self class], aSEL, (IMP) objcswitch, types);
+    //  - @? is for the last ("default") block
+    NSMutableString * types = [NSMutableString stringWithFormat:@"%s%s%s",
+                               @encode(void),@encode(id),@encode(SEL)];
+
+    for(size_t i=0;i<caseCount;i++)
+        [types appendFormat:@"%s%s",@encode(id),@encode(void(^)(void))];
+
+    if(hasDefaultBlock)
+        [types appendFormat:@"%s",@encode(void(^)(void))];
+
+    class_addMethod([self class], aSEL, (IMP) objcswitch, [types cStringUsingEncoding:NSASCIIStringEncoding]);
     return YES;
 }
+
 @end
 
 #pragma clang diagnostic pop
 
-/****************************************************************************/
-#pragma mark -
-
-static void objcswitch(ObjcSwitch * self, SEL _cmd, id arg,...)
+// Actual implementation for all the methods
+// 
+// Although there's no variadic in the public interface, we use one for the implementation.
+// We use the length of the selector to count the number of cases
+// and find if there's a "default" block.
+static void objcswitch(ObjcSwitch * self, SEL _cmd, ...)
 {
-    const char* selector_name = sel_getName(_cmd);
-    size_t sel_name_length = strlen(selector_name);
-    size_t suffix_length = sel_name_length % strlen(CASE__);
-    if(suffix_length!=0)
-    {
-        if(sel_name_length>=strlen(CASE__)+strlen(DEFAULT_))
-            suffix_length += strlen(CASE__);
-    }
-    size_t case_count = (sel_name_length-suffix_length)/strlen(CASE__);
-    
-    assert(suffix_length==0 || suffix_length==strlen(DEFAULT_));
-    
-    id value;
-    void (^block)(void);
+    // find out number of arguments
+    const char* selector = sel_getName(_cmd);
+    BOOL hasDefaultBlock = (strlen(selector) % strlen(CASE__)) != 0;
+    size_t caseCount = (strlen(selector)-(hasDefaultBlock?strlen(DEFAULT_):0)) / strlen(CASE__);
+    assert( (strlen(selector)-(hasDefaultBlock?strlen(DEFAULT_):0)) / caseCount == strlen(CASE__) );
+
+    // loop for each "case"
+    // (object,block) pair of arguments
 	va_list args;
-    
-	va_start(args, arg);
-    value = arg; // first value <- remove line
-    
-    for (size_t i=0; i<case_count; i++)
+	va_start(args, _cmd);
+    for (size_t i=0; i<caseCount; i++)
     {
-        if(i==0)
-            value = arg;
-        else
-            value = va_arg(args, id);
-        block = va_arg(args, void (^)(void));
+        id value = va_arg(args, id);
+        void (^block)(void) = va_arg(args, void (^)(void));
 
         if ([self->receiver isEqual:value])
         {
             block();
             goto cleanup;
-        }
+       }
 	}
 
-    if(suffix_length) // "default" case
+    // "default:" block
+    if(hasDefaultBlock)
     {
-        block = va_arg(args, void (^)(void));
+        void (^block)(void) = va_arg(args, void (^)(void));
         block();
     }
     
 cleanup:
 	va_end(args); 
-    return;
 }
 
-/****************************************************************************/
-#pragma mark -
-
+// Our NSObject category to create the ObjcSwitch, simply used as a trampoline object.
+// 
+// We could also define the case:: methods on NSObject itself, but that would require
+// implementing - (BOOL) resolveInstanceMethod: in an NSObject category, which
+// would be quite dangerous.
 @implementation NSObject (objcswitch)
 - (ObjcSwitch *) switch
 {

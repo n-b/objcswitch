@@ -32,7 +32,7 @@
 /* Begin PBXFileReference section */
 		371C912E14CDD60400617D4C /* objcswitch_case.def.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = objcswitch_case.def.h; sourceTree = SOURCE_ROOT; };
 		371C912F14CDD61600617D4C /* objcswitch_switch.def.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = objcswitch_switch.def.h; sourceTree = SOURCE_ROOT; };
-		373D21D614CE17D400C039BF /* test */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = test; sourceTree = BUILT_PRODUCTS_DIR; };
+		373D21D614CE17D400C039BF /* test */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = test; path = objcswitch_tests_build; sourceTree = BUILT_PRODUCTS_DIR; };
 		37A072EF14C487580094CD27 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		37A072FD14C487960094CD27 /* NSObject+objcswitch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSObject+objcswitch.h"; sourceTree = SOURCE_ROOT; };
 		37A072FE14C487960094CD27 /* NSObject+objcswitch.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSObject+objcswitch.m"; sourceTree = SOURCE_ROOT; };
@@ -250,9 +250,7 @@
 				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				CLANG_ENABLE_OBJC_ARC = YES;
 				COPY_PHASE_STRIP = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -278,8 +276,6 @@
 				CLANG_ENABLE_OBJC_ARC = YES;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
@@ -320,6 +316,7 @@
 				373D21E214CE17D400C039BF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		37A072E514C487570094CD27 /* Build configuration list for PBXProject "objcswitch" */ = {
 			isa = XCConfigurationList;

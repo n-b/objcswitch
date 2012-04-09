@@ -44,86 +44,620 @@
 # objcswitch
 
 ---
+.center.middle
+## Cocoaheads Smalltalk
+# objcswitch
+*Comment ajouter des fonctionnalités au language  
+avec des hacks.*
+
+---
 # Objectif
 
-* C switch ne gère que les integers statiques
-* idée similaire avec les objets, sans les quirks.
-* Apple ajoute des créations d'objets inline dans LLVM 4, c'est dans le même esprit
+Comme les switch C :
 
-# Interface choisie
-
-* envisagés : variadiques, objet "Case"
-	* problèmes : pas beau, terminateur nil, pas de "default:", virgule entre objet et block
-
-* Implementation choisie
-	* Objet "Switch" intermediaire
-		* concept trampoline/HOM/mapreduce
-		* sert aussi à ne pas polluer NSObject
-		* sert de base pour les extensions eventuelles d'api.
-	* syntaxe d'appel claire,
-	* "default:" possible
-	* pas de variadiques dans l'api, donc pas de terminateur nécessaire.
-	* hack #1: "empty" selector names 
-	* problème : il faut déclarer toutes les variantes de la méthode.
-
--> show code appels démo et tests
+	.objectivec
+	int foo = ...;
+	switch(foo) {
+		case 1: ...; break;
+		case 2: ...; break;
+		case 3: ...; break;
+		default: ...;
+	}
 
 ---
-# implémentation 
+# Objectif
 
-* pas de variadiques dans l'api, mais
-	* une seule fonction sert d'implémentation à tous les selecteurs
-	* implémentation utilise variadiques
-	* are an ugly old shit. You can't count them, you can't convert them easily to an array, you can't forward them to another variadic.
-	* variadics in C are passed are regular arguments, you just don't know how many. but they're definitely here on the stack with all their static friends.
-		* au moins sur x86. Je n'ai pas essayé sur ARM et ppc.
-	* using the selector length to decide the number of arguments :  normally, variadics use either a count arg, a sentinel, of format specifiers.
+Avec des objets, mais sans les trucs tordus:
 
-* ObjC Runtime : ajout de méthodes à l'execution :
-	* au moment de l'appel, seulement si la méthode n'existe pas déjà.
-		* à l'appel suivant, c'est bon.
-	* IMP et SEL
+	.objectivec
+	id obj = ...;
+	switch(obj) {
+		case @"foo": {...};
+		case [NSNumber numberWithInt:1]: {...};
+		case otherObject: {...};
+		default: {...};
+	}
+
+---
+# Objectif
+
+Avec des objets, mais sans les trucs tordus:
+
+	.objectivec
+	id obj = ...;
+	switch(obj) {
+		case @"foo": {...};
+		case [NSNumber numberWithInt:1]: {...};
+		case otherObject: {...};
+		default: {...};
+	}
+
+* Pas de `break;`
+* L'expression évaluée peut être n'importe quel objet, statique ou dynamique.
+* Chaque case a son propre scope.  
+
+---
+# Objectif
+
+Avec des objets, mais sans les trucs tordus:
+
+	.objectivec
+	id obj = ...;
+	switch(obj) {
+		case @"foo": {...};
+		case [NSNumber numberWithInt:1]: {...};
+		case otherObject: {...};
+		default: {...};
+	}
+
+* Pas de `break;`
+* L'expression évaluée peut être n'importe quel objet, statique ou dynamique.  
+* Chaque case a son propre scope.  
+&nbsp;  
+&nbsp;  
+***On ne peut pas écrire ça sans changer le compilateur.***
+
+---
+.center.middle
+# API
+La partie artistique
+
+---
+# API
+
+Méthodes avec paramètres variadiques : 
+
+	.objectivec
+	id obj = ...;
+    [obj switch:
+     @"bar",^{ ... },
+     @"foo",^{ ... },
+     nil];
+
+<!--
+avantage :
+* chaque "case" a son propre scope,
+problèmes : 
+* pas beau,
+* terminateur nil,
+* pas de "default:",
+* virgule entre objet et block
+* (pas écrit "Case")
+-->
+
+---
+# API
+
+Avec un object intermédiaire `case` :
+
+	.objectivec
+	@interface case : NSObject
+	+ (id) :(id)value_ :(void (^)(void))block;
+	@end
+
+et une méthode variadique :
+
+	.objectivec
+	id obj = ...;
+    [obj switch:
+     [case :@"bar" :^{ ... }],
+     [case :@"foo" :^{ ... }],
+     nil];
+
+<!--
+hack: méthode "::"
+problèmes :
+* syntaxe lourde, trop de brackets
+* terminateur nil
+-->
+
+---
+# API
+
+Déclaration de plusieurs méthodes :
+
+	.objectivec
+	id obj = ...;
+    [obj switch_case:@"bar" :^{ ... }
+                case:@"foo" :^{ ... }
+	 ];
+
+---
+# API
+
+Déclaration de plusieurs méthodes :
+
+	.objectivec
+	id obj = ...;
+    [obj switch_case:@"bar" :^{ ... }
+                case:@"foo" :^{ ... }
+	 ];
+
+Variante avec block `default:` :
+
+	.objectivec
+	id obj = ...;
+    [obj switch_case:@"bar" :^{ ... }
+                case:@"foo" :^{ ... }
+	         default:^{ ... }
+	 ];
+
+<!--
+problème : 
+* il faut déclarer toutes les variantes de la méthode.
+	* mais c'est un problème pour l'implémenteur, pas l'utilisateur de l'API.
+* on pollue NSObject.
+-->
+
+---
+# API
+
+Objet "Switch" intermediaire :
+
+	.objectivec
+	id obj = ...;
+	[[obj switch] case:@"bar" :^{ ... }
+	              case:@"foo" :^{ ... }
+	 ];
+
+Variante avec block `default:` :
+
+	.objectivec
+	id obj = ...;
+	[[obj switch] case:@"bar" :^{ ... }
+	              case:@"foo" :^{ ... }
+	           default:^{ ... }
+	 ];
+
+<!--
+concept trampoline/HOM/mapreduce
+* sert aussi à ne pas polluer NSObject
+* sert de base pour les extensions eventuelles d'api.
+-->
+
+---
+# API
+**Il nous faut :**
+
+Une méthode sur NSObject pour obtenir l'objet `switch` :
+
+	.objectivec
+	@interface NSObject (objcswitch)
+	- (ObjcSwitch *) switch;
+	@end
+
+---
+# API
+**Il nous faut :**
+
+Une méthode sur NSObject pour obtenir l'objet `switch` :
+
+	.objectivec
+	@interface NSObject (objcswitch)
+	- (ObjcSwitch *) switch;
+	@end
+	
+Des méthodes sur `case::case::`, avec et sans block `default:` :
+
+	.objectivec
+	@interface ObjcSwitch : NSObject
+	 - (void) case:(id)v :(void (^)(void))b
+	          case:(id)v :(void (^)(void))b
+	           ...
+	          default:(void (^)(void))b;
+
+	 - (void) case:(id)v :(void (^)(void))b
+	          case:(id)v :(void (^)(void))b
+	           ...
+	          ;
+	@end
+	 
+<!--
+Objet "Switch" intermediaire
+* syntaxe d'appel claire,
+* "default:" possible avec des variantes
+* pas de variadiques dans l'api, donc pas de terminateur nécessaire.
+* problème : il faut déclarer toutes les variantes de la méthode.
+* évidemment, il y aura un maximum, mais franchement, un switch avec 50 cas, c'est un mauvais design.
+-->
+
+---
+.center.middle
+# Implémentation
+La partie technique
+
+---
+# Implémentation 
+
+Une seule fonction sert d'implémentation pour toutes les méthodes.
+
+	static void objcswitch(ObjcSwitch * self, SEL _cmd, ...)
+	{
+	  ...
+	}
+
+---
+# Implémentation 
+
+Une seule fonction sert d'implémentation pour toutes les méthodes.
+
+	static void objcswitch(ObjcSwitch * self, SEL _cmd, ...)
+	{
+	  ...
+	}
+
+Ajoutée à la demande :
+
+	+ (BOOL)resolveInstanceMethod:(SEL)aSEL
+	{
+		const char* selector = sel_getName(aSEL);
+		// Check selector looks like 
+		//  case::case::
+		// or
+		//  case::case::default:
+		...
+	    class_addMethod([self class], aSEL, (IMP) objcswitch, types);
+	    return YES;
+	}
+
+<!--
+* la méthode est ajoutée à la classe au moment de l'appel, seulement si elle n'existe pas déjà. (à l'appel suivant, c'est bon.)
+* les IMP (implémentations) des selectors (SEL) ont 2 arguments masquées (self et _cmd)
+* pas de variadiques dans l'api, mais l'implémentation utilise variadiques
+* Ca marche parce que les arguments des méthodes variadiques sont passés comme ceux des méthodes normales. (Sur la stack.)
+	* au moins sur x86. Je n'ai pas essayé sur ARM et ppc.
+-->
+
+---
+# Implémentation
+
+`_cmd` est utilisé pour connaître le nombre d'arguments.
+
+	.objectivec
+	static void objcswitch(ObjcSwitch * self, SEL _cmd, ...)
+	{
+		va_list args;
+		va_start(args, _cmd);
+
+	    // Find out number of arguments in our va_list
+	    const char* selector = sel_getName(_cmd);
+	    BOOL hasDefaultBlock = (strlen(selector) % strlen(CASE__)) != 0;
+	    size_t caseCount = (strlen(selector)-(hasDefaultBlock?strlen(DEFAULT_):0)) / strlen(CASE__);
+		
+		...
+
+<!--
+* problèmes des variadiques : 
+	* vieux hack pourri
+	* on ne peut pas savoir combien il y en a, ni leur type.
+* Les arguments sont par paires, objet et block.
+* On utilise le selecteur pour savoir quelle méthode est voulue, 
+	* le nombre d'arguments
+	* s'il y a un default:
+	* c'est assez particulier : en général, les variadiques utilisent un argument "count", une sentinelle, ou un format (à la printef) pour connaitre leurs arguments.
+* trick :
 	* sel_getName : it's only a cast if the selector is valid. (selectors are C strings)
-	* hidden arguments (self et _cmd) to method implementations
-	* type encodings ObjC
-		* @encode()
-
--> show code .m resolveInstanceMethod et objcswitch().
-
----
-# include hacks
-
--> nécéssité de déclarer toutes les variantes possibles pour éviter les warnings
-	-> gros hack sur les #includes
-
-	* __INCLUDE_LEVEL__
-		* #include recursifs
-	* #include paramétrés -> template programming
-
--> show code .h, .def.h
-
----
-# améliorations possibles
-
-* comparaison par selecteur ou block custom
-* options faciles pour les comparaisons de strings (case-insensitive, diacritics-insensitive…)
-* parallélisation
-* executer tous les blocks YES, pas seulement le premier
-* syntaxe LLVM 4 : encore mieux
-
----
-# links
-
-github/n-b
-LLVM 4
-parameterized includes
-
----
-# more hacks
-
 	* strlen optimisé à la compilation sur les strings statiques
-	* #pragma clang diagnostic push
-	* define ivar in @implementation
-	* C99-style static C array (with variable length)
+-->
+
+---
+# Implémentation
+
+Il ne reste plus qu'à boucler :
+
+	.objectivec
+		...
+
+	    for (size_t i=0; i<caseCount; i++)
+	    {
+	        id value = va_arg(args, id);
+	        void (^block)(void) = va_arg(args, void (^)(void));
+
+	        if ([self->receiver isEqual:value])
+	        {
+	            block();
+	            goto cleanup;
+	       }
+		}
+
+	    if(hasDefaultBlock)
+	    {
+	        void (^block)(void) = va_arg(args, void (^)(void));
+	        block();
+	    }
+    
+	cleanup:
+		va_end(args); 
+	}
+
+<!--
+-->
+
+---
+.center.middle
+# Déclaration
+La partie gros hack.
+
+
+---
+# Déclaration
+
+Il faut déclarer toutes les variantes des méthodes :
+
+	.objectivec
+	- (void) case:(id)v :(void (^)(void))b
+	      default:(void (^)(void))b;
+
+---
+# Déclaration
+
+Il faut déclarer toutes les variantes des méthodes :
+
+	.objectivec
+	- (void) case:(id)v :(void (^)(void))b
+	      default:(void (^)(void))b;
+	
+	- (void) case:(id)v :(void (^)(void))b
+	         case:(id)v :(void (^)(void))b
+	      default:(void (^)(void))b;
+
+---
+# Déclaration
+
+Il faut déclarer toutes les variantes des méthodes :
+
+	.objectivec
+	- (void) case:(id)v :(void (^)(void))b
+	      default:(void (^)(void))b;
+	
+	- (void) case:(id)v :(void (^)(void))b
+	         case:(id)v :(void (^)(void))b
+	      default:(void (^)(void))b;
+	
+	- (void) case:(id)v :(void (^)(void))b
+	         case:(id)v :(void (^)(void))b
+	         case:(id)v :(void (^)(void))b
+	      default:(void (^)(void))b;
+
+---
+# Déclaration
+
+Il faut déclarer toutes les variantes des méthodes :
+
+	.objectivec
+	- (void) case:(id)v :(void (^)(void))b
+	      default:(void (^)(void))b;
+	
+	- (void) case:(id)v :(void (^)(void))b
+	         case:(id)v :(void (^)(void))b
+	      default:(void (^)(void))b;
+	
+	- (void) case:(id)v :(void (^)(void))b
+	         case:(id)v :(void (^)(void))b
+	         case:(id)v :(void (^)(void))b
+	      default:(void (^)(void))b;
+	
+	- (void) case:(id)v :(void (^)(void))b
+	         case:(id)v :(void (^)(void))b
+	         case:(id)v :(void (^)(void))b
+	         case:(id)v :(void (^)(void))b
+	      default:(void (^)(void))b;
+
+---
+# Déclaration
+
+Il faut déclarer toutes les variantes des méthodes :
+
+	.objectivec
+	- (void) case:(id)v :(void (^)(void))b
+	      default:(void (^)(void))b;
+	
+	- (void) case:(id)v :(void (^)(void))b
+	         case:(id)v :(void (^)(void))b
+	      default:(void (^)(void))b;
+	
+	- (void) case:(id)v :(void (^)(void))b
+	         case:(id)v :(void (^)(void))b
+	         case:(id)v :(void (^)(void))b
+	      default:(void (^)(void))b;
+	
+	- (void) case:(id)v :(void (^)(void))b
+	         case:(id)v :(void (^)(void))b
+	         case:(id)v :(void (^)(void))b
+	         case:(id)v :(void (^)(void))b
+	      default:(void (^)(void))b;
+
+	- (void) case:(id)v :(void (^)(void))b
+	         case:(id)v :(void (^)(void))b
+	         case:(id)v :(void (^)(void))b
+	         case:(id)v :(void (^)(void))b
+	         case:(id)v :(void (^)(void))b
+	      default:(void (^)(void))b;
+
+---
+# Déclaration
+
+(et les mêmes sans les blocks `default:`)
+
+---
+.center.middle
+# Mmm…
+
+---
+.center.middle
+# Templates !
+
+---
+.center.middle
+# Templates !
+
+## `__INCLUDE_LEVEL__`  
+
+---
+.center.middle
+# Templates !
+
+## X-Macros
+
+---
+# #include Récursifs
+
+objcswitch_switch.def :
+
+	.objectivec
+	#if __INCLUDE_LEVEL__ < OBJCSWITCH_MAX_CASE_COUNT
+
+	  - (void) case:(id)v :(void (^)(void))b
+	        #include "objcswitch_case.def.h"
+	        default:(void (^)(void))b;
+
+	  #include "objcswitch_switch.def"        // include myself for next method
+
+	#endif
+
+---
+# #include Récursifs
+
+objcswitch_switch.def :
+
+	.objectivec
+	#if __INCLUDE_LEVEL__ < OBJCSWITCH_MAX_CASE_COUNT
+
+	  - (void) case:(id)v :(void (^)(void))b
+	        #include "objcswitch_case.def.h"
+	        default:(void (^)(void))b;
+
+	  #include "objcswitch_switch.def"        // include myself for next method
+
+	#endif
+
+objcswitch_case.def :
+
+	.objectivec
+	#if __INCLUDE_LEVEL__ < OBJCSWITCH_MAX_CASE_COUNT
+
+	        case:(id)v :(void (^)(void))b
+	        #include "objcswitch_case.def"    // include myself for next line
+
+	#endif
+
+---
+# X-Macros
+
+objcswitch_switch.def :
+
+	.objectivec
+	- (void) case:(id)v :(void (^)(void))b
+	    #include "objcswitch_case.def"
+	    #if OBJCSWITCH_DEFAULT_BLOCK
+	      default:(void (^)(void))b;
+	    #else
+	      ;
+	    #endif
+
+NSObject+objcswitch.h :
+
+	.objectivec
+	#define OBJCSWITCH_DEFAULT_BLOCK TRUE
+	#include "objcswitch_switch.def"
+	
+	
+	#define OBJCSWITCH_DEFAULT_BLOCK FALSE
+	#include "objcswitch_switch.def"
+
+---
+.center.middle
+# Améliorations
+en bonus
+
+---
+# Améliorations
+
+Selecteur ou block de comparaison custom
+
+	.objectivec
+	[[@"foo" switchUsingSelector:@selector(localizedCompare:)]
+	 case:@"bar" :^{ ... }
+	 case:@"Foo" :^{ ... }
+	 ];
+&nbsp;  
+
+	.objectivec
+	[[@"foo" switchUsingComparator:(NSComparator)]
+	 case:@"bar" :^{ ... }
+	 case:@"Foo" :^{ ... }
+	 ];
+
+---
+# Améliorations
+
+Options faciles pour les comparaisons de strings  
+(case-insensitive, diacritics-insensitive…)
+
+	.objectivec
+	[[@"foo" switchWithStringOptions:NSCaseInsensitiveSearch]
+	 case:@"bar" :^{ ... }
+	 case:@"Foo" :^{ ... }
+	 ];
+
+---
+# Améliorations
+
+Parallélisation  
+Execution de tous les `case` égaux à l'objet évalué
+
+	.objectivec
+	[[@"foo" switchWithOptions:OCSwitchOptionsAllMatchingBlocks]
+	 case:object1 :^{ ... }
+	 case:object2 :^{ ... }
+	 ];
+
+---
+# Améliorations
+
+Syntaxe avec Objective-C literals  
+(Apple LLVM Compiler 4.0, clang v3.1)
+
+	.objectivec
+	id obj = ...;
+	[[obj switch]
+	 case:@"abc" :^{ ... }
+	 case:@123 :^{ ... }
+	 case:@{@"a",@"b"} :^{ ... }
+	 ];
+
+---
+.center.middle
+# Liens
+
+[Objective-C literals in clang](http://clang.llvm.org/docs/ObjectiveCLiterals.html)  
+[X Macros](http://drdobbs.com/cpp/184401387)  
+[Trampoline Pattern](http://en.wikipedia.org/wiki/Trampoline_%28computing%29)  
+&nbsp;  
+&nbsp;  
+[github/n-b/objcswitch](github/n-b/objcswitch)
+
+---
+
 
 </textarea><div id="slideshow"></div></body></html>

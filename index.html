@@ -174,7 +174,8 @@ Déclaration de plusieurs méthodes :
 
 	id obj = ...;
     [obj switch_case:@"bar" :^{ ... }
-                case:@"foo" :^{ ... }
+	            case:@"foo" :^{ ... }
+                ...
 	 ];
 
 ---
@@ -184,14 +185,16 @@ Déclaration de plusieurs méthodes :
 
 	id obj = ...;
     [obj switch_case:@"bar" :^{ ... }
-                case:@"foo" :^{ ... }
+	            case:@"foo" :^{ ... }
+                ...
 	 ];
 
 Variante avec block `default:` :
 
 	id obj = ...;
     [obj switch_case:@"bar" :^{ ... }
-                case:@"foo" :^{ ... }
+	            case:@"foo" :^{ ... }
+                ...
 	         default:^{ ... }
 	 ];
 
@@ -210,6 +213,7 @@ Objet "Switch" intermediaire :
 	id obj = ...;
 	[[obj switch] case:@"bar" :^{ ... }
 	              case:@"foo" :^{ ... }
+	              ...
 	 ];
 
 Variante avec block `default:` :
@@ -217,6 +221,7 @@ Variante avec block `default:` :
 	id obj = ...;
 	[[obj switch] case:@"bar" :^{ ... }
 	              case:@"foo" :^{ ... }
+	              ...
 	           default:^{ ... }
 	 ];
 

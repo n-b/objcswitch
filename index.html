@@ -2,39 +2,32 @@
 <head>
 <title>Cocoaheads Smalltalk : Tagged Pointers</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-<script src="https://github.com/downloads/gnab/remark/remark-0.3.5.min.js" type="text/javascript"></script>
+<script src="https://github.com/downloads/gnab/remark/remark-0.3.5.min.js" type="text/javascript">
+{ 
+	"highlightLanguage": "objectivec",
+	"highlightInline": true,
+	"highlightStyle": "solarized_light"
+}
+</script>
 <style type="text/css" media="screen">
-	@import url(http://fonts.googleapis.com/css?family=Quattrocento+Sans:400,700);
-	@import url(http://fonts.googleapis.com/css?family=Arvo:700italic);
+@import url(http://fonts.googleapis.com/css?family=Quattrocento+Sans:400,700);
+@import url(http://fonts.googleapis.com/css?family=Amaranth:700italic);
 
-	h1, h2 {
-	  font-family: 'Quattrocento Sans', sans-serif;
-	  font-weight: bold;
-	}
-	p {
-	  font-family: 'Quattrocento Sans', sans-serif;
-	}
-	a {
-	  color: #a86;
-	  text-decoration: none;
-	}
-	.center {
-	  margin: 0 auto;
-	}
-	.footnote {
-	  position: absolute;
-	  bottom: 3em;
-	}
-	pre {
-	  border-left: 0.4em solid #d7d7d7;
-	  padding-left: 0.5em;
-	}
-	code {
-	  background: #f4f4f4 !important;
-	}
-	.position {
-	  visibility: hidden;
-	}
+h1, h2 {
+	font-family: 'Amaranth', sans-serif;
+	font-weight: bold;
+	font-style: italic;
+}
+body {
+	font-family: 'Quattrocento Sans', sans-serif;
+}
+a {
+	color: #a86;
+	text-decoration: none;
+}
+.position {
+	visibility: hidden;
+}
 </style>
 </head><body><textarea id="source">
 
@@ -55,7 +48,6 @@ avec des hacks.*
 
 Comme les switch C :
 
-	.objectivec
 	int foo = ...;
 	switch(foo) {
 		case 1: ...; break;
@@ -69,7 +61,6 @@ Comme les switch C :
 
 Avec des objets, mais sans les trucs tordus:
 
-	.objectivec
 	id obj = ...;
 	switch(obj) {
 		case @"foo": {...};
@@ -83,7 +74,6 @@ Avec des objets, mais sans les trucs tordus:
 
 Avec des objets, mais sans les trucs tordus:
 
-	.objectivec
 	id obj = ...;
 	switch(obj) {
 		case @"foo": {...};
@@ -101,7 +91,6 @@ Avec des objets, mais sans les trucs tordus:
 
 Avec des objets, mais sans les trucs tordus:
 
-	.objectivec
 	id obj = ...;
 	switch(obj) {
 		case @"foo": {...};
@@ -127,7 +116,6 @@ La partie artistique
 
 Méthodes avec paramètres variadiques : 
 
-	.objectivec
 	id obj = ...;
     [obj switch:
      @"bar",^{ ... },
@@ -150,14 +138,12 @@ problèmes :
 
 Avec un object intermédiaire `case` :
 
-	.objectivec
 	@interface case : NSObject
 	+ (id) :(id)value_ :(void (^)(void))block;
 	@end
 
 et une méthode variadique :
 
-	.objectivec
 	id obj = ...;
     [obj switch:
      [case :@"bar" :^{ ... }],
@@ -176,7 +162,6 @@ problèmes :
 
 Déclaration de plusieurs méthodes :
 
-	.objectivec
 	id obj = ...;
     [obj switch_case:@"bar" :^{ ... }
                 case:@"foo" :^{ ... }
@@ -187,7 +172,6 @@ Déclaration de plusieurs méthodes :
 
 Déclaration de plusieurs méthodes :
 
-	.objectivec
 	id obj = ...;
     [obj switch_case:@"bar" :^{ ... }
                 case:@"foo" :^{ ... }
@@ -195,7 +179,6 @@ Déclaration de plusieurs méthodes :
 
 Variante avec block `default:` :
 
-	.objectivec
 	id obj = ...;
     [obj switch_case:@"bar" :^{ ... }
                 case:@"foo" :^{ ... }
@@ -214,7 +197,6 @@ problème :
 
 Objet "Switch" intermediaire :
 
-	.objectivec
 	id obj = ...;
 	[[obj switch] case:@"bar" :^{ ... }
 	              case:@"foo" :^{ ... }
@@ -222,7 +204,6 @@ Objet "Switch" intermediaire :
 
 Variante avec block `default:` :
 
-	.objectivec
 	id obj = ...;
 	[[obj switch] case:@"bar" :^{ ... }
 	              case:@"foo" :^{ ... }
@@ -237,11 +218,10 @@ concept trampoline/HOM/mapreduce
 
 ---
 # API
-**Il nous faut :**
+***Il nous faut :***
 
 Une méthode sur NSObject pour obtenir l'objet `switch` :
 
-	.objectivec
 	@interface NSObject (objcswitch)
 	- (ObjcSwitch *) switch;
 	@end
@@ -252,14 +232,12 @@ Une méthode sur NSObject pour obtenir l'objet `switch` :
 
 Une méthode sur NSObject pour obtenir l'objet `switch` :
 
-	.objectivec
 	@interface NSObject (objcswitch)
 	- (ObjcSwitch *) switch;
 	@end
 	
 Des méthodes sur `case::case::`, avec et sans block `default:` :
 
-	.objectivec
 	@interface ObjcSwitch : NSObject
 	 - (void) case:(id)v :(void (^)(void))b
 	          case:(id)v :(void (^)(void))b
@@ -293,7 +271,7 @@ Une seule fonction sert d'implémentation pour toutes les méthodes.
 
 	static void objcswitch(ObjcSwitch * self, SEL _cmd, ...)
 	{
-	  ...
+		...
 	}
 
 ---
@@ -303,7 +281,7 @@ Une seule fonction sert d'implémentation pour toutes les méthodes.
 
 	static void objcswitch(ObjcSwitch * self, SEL _cmd, ...)
 	{
-	  ...
+		...
 	}
 
 Ajoutée à la demande :
@@ -333,7 +311,6 @@ Ajoutée à la demande :
 
 `_cmd` est utilisé pour connaître le nombre d'arguments.
 
-	.objectivec
 	static void objcswitch(ObjcSwitch * self, SEL _cmd, ...)
 	{
 		va_list args;
@@ -363,9 +340,8 @@ Ajoutée à la demande :
 ---
 # Implémentation
 
-Il ne reste plus qu'à boucler :
+Il ne reste plus qu'à boucler sur les `case:`:
 
-	.objectivec
 		...
 
 	    for (size_t i=0; i<caseCount; i++)
@@ -404,7 +380,6 @@ La partie gros hack.
 
 Il faut déclarer toutes les variantes des méthodes :
 
-	.objectivec
 	- (void) case:(id)v :(void (^)(void))b
 	      default:(void (^)(void))b;
 
@@ -413,7 +388,6 @@ Il faut déclarer toutes les variantes des méthodes :
 
 Il faut déclarer toutes les variantes des méthodes :
 
-	.objectivec
 	- (void) case:(id)v :(void (^)(void))b
 	      default:(void (^)(void))b;
 	
@@ -426,7 +400,6 @@ Il faut déclarer toutes les variantes des méthodes :
 
 Il faut déclarer toutes les variantes des méthodes :
 
-	.objectivec
 	- (void) case:(id)v :(void (^)(void))b
 	      default:(void (^)(void))b;
 	
@@ -435,30 +408,6 @@ Il faut déclarer toutes les variantes des méthodes :
 	      default:(void (^)(void))b;
 	
 	- (void) case:(id)v :(void (^)(void))b
-	         case:(id)v :(void (^)(void))b
-	         case:(id)v :(void (^)(void))b
-	      default:(void (^)(void))b;
-
----
-# Déclaration
-
-Il faut déclarer toutes les variantes des méthodes :
-
-	.objectivec
-	- (void) case:(id)v :(void (^)(void))b
-	      default:(void (^)(void))b;
-	
-	- (void) case:(id)v :(void (^)(void))b
-	         case:(id)v :(void (^)(void))b
-	      default:(void (^)(void))b;
-	
-	- (void) case:(id)v :(void (^)(void))b
-	         case:(id)v :(void (^)(void))b
-	         case:(id)v :(void (^)(void))b
-	      default:(void (^)(void))b;
-	
-	- (void) case:(id)v :(void (^)(void))b
-	         case:(id)v :(void (^)(void))b
 	         case:(id)v :(void (^)(void))b
 	         case:(id)v :(void (^)(void))b
 	      default:(void (^)(void))b;
@@ -468,7 +417,29 @@ Il faut déclarer toutes les variantes des méthodes :
 
 Il faut déclarer toutes les variantes des méthodes :
 
-	.objectivec
+	- (void) case:(id)v :(void (^)(void))b
+	      default:(void (^)(void))b;
+	
+	- (void) case:(id)v :(void (^)(void))b
+	         case:(id)v :(void (^)(void))b
+	      default:(void (^)(void))b;
+	
+	- (void) case:(id)v :(void (^)(void))b
+	         case:(id)v :(void (^)(void))b
+	         case:(id)v :(void (^)(void))b
+	      default:(void (^)(void))b;
+	
+	- (void) case:(id)v :(void (^)(void))b
+	         case:(id)v :(void (^)(void))b
+	         case:(id)v :(void (^)(void))b
+	         case:(id)v :(void (^)(void))b
+	      default:(void (^)(void))b;
+
+---
+# Déclaration
+
+Il faut déclarer toutes les variantes des méthodes :
+
 	- (void) case:(id)v :(void (^)(void))b
 	      default:(void (^)(void))b;
 	
@@ -524,7 +495,6 @@ Il faut déclarer toutes les variantes des méthodes :
 
 objcswitch_switch.def :
 
-	.objectivec
 	#if __INCLUDE_LEVEL__ < OBJCSWITCH_MAX_CASE_COUNT
 
 	  - (void) case:(id)v :(void (^)(void))b
@@ -540,7 +510,6 @@ objcswitch_switch.def :
 
 objcswitch_switch.def :
 
-	.objectivec
 	#if __INCLUDE_LEVEL__ < OBJCSWITCH_MAX_CASE_COUNT
 
 	  - (void) case:(id)v :(void (^)(void))b
@@ -553,7 +522,6 @@ objcswitch_switch.def :
 
 objcswitch_case.def :
 
-	.objectivec
 	#if __INCLUDE_LEVEL__ < OBJCSWITCH_MAX_CASE_COUNT
 
 	        case:(id)v :(void (^)(void))b
@@ -566,7 +534,6 @@ objcswitch_case.def :
 
 objcswitch_switch.def :
 
-	.objectivec
 	- (void) case:(id)v :(void (^)(void))b
 	    #include "objcswitch_case.def"
 	    #if OBJCSWITCH_DEFAULT_BLOCK
@@ -577,7 +544,6 @@ objcswitch_switch.def :
 
 NSObject+objcswitch.h :
 
-	.objectivec
 	#define OBJCSWITCH_DEFAULT_BLOCK TRUE
 	#include "objcswitch_switch.def"
 	
@@ -593,16 +559,15 @@ en bonus
 ---
 # Améliorations
 
-Selecteur ou block de comparaison custom
+Selecteur custom pour la comparaison :
 
-	.objectivec
 	[[@"foo" switchUsingSelector:@selector(localizedCompare:)]
 	 case:@"bar" :^{ ... }
 	 case:@"Foo" :^{ ... }
 	 ];
-&nbsp;  
 
-	.objectivec
+Ou block custom :
+
 	[[@"foo" switchUsingComparator:(NSComparator)]
 	 case:@"bar" :^{ ... }
 	 case:@"Foo" :^{ ... }
@@ -612,9 +577,8 @@ Selecteur ou block de comparaison custom
 # Améliorations
 
 Options faciles pour les comparaisons de strings  
-(case-insensitive, diacritics-insensitive…)
+(case-insensitive, diacritics-insensitive…) :
 
-	.objectivec
 	[[@"foo" switchWithStringOptions:NSCaseInsensitiveSearch]
 	 case:@"bar" :^{ ... }
 	 case:@"Foo" :^{ ... }
@@ -623,10 +587,9 @@ Options faciles pour les comparaisons de strings
 ---
 # Améliorations
 
-Parallélisation  
-Execution de tous les `case` égaux à l'objet évalué
+Parallélisation,  
+Execution de tous les `case` égaux à l'objet évalué :
 
-	.objectivec
 	[[@"foo" switchWithOptions:OCSwitchOptionsAllMatchingBlocks]
 	 case:object1 :^{ ... }
 	 case:object2 :^{ ... }
@@ -636,9 +599,8 @@ Execution de tous les `case` égaux à l'objet évalué
 # Améliorations
 
 Syntaxe avec Objective-C literals  
-(Apple LLVM Compiler 4.0, clang v3.1)
+(Apple LLVM Compiler 4.0, clang v3.1) :
 
-	.objectivec
 	id obj = ...;
 	[[obj switch]
 	 case:@"abc" :^{ ... }
@@ -651,7 +613,7 @@ Syntaxe avec Objective-C literals
 # Liens
 
 [Objective-C literals in clang](http://clang.llvm.org/docs/ObjectiveCLiterals.html)  
-[X Macros](http://drdobbs.com/cpp/184401387)  
+[X-Macros](http://drdobbs.com/cpp/184401387)  
 [Trampoline Pattern](http://en.wikipedia.org/wiki/Trampoline_%28computing%29)  
 &nbsp;  
 &nbsp;  

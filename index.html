@@ -304,7 +304,7 @@ Ajoutée à la demande :
 		// or
 		//  case::case::default:
 		...
-	    class_addMethod([self class], aSEL, (IMP) objcswitch, types);
+	    class_addMethod(self, aSEL, (IMP) objcswitch, types);
 	    return YES;
 	}
 

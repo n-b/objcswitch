@@ -1,6 +1,6 @@
 <!DOCTYPE html><html>
 <head>
-<title>Cocoaheads Smalltalk : Tagged Pointers</title>
+<title>Cocoaheads Smalltalk : objcswitch</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <script src="https://github.com/downloads/gnab/remark/remark-0.3.5.min.js" type="text/javascript">
 { 
@@ -49,7 +49,7 @@ a {
 ## Cocoaheads Smalltalk
 # objcswitch
 *Comment ajouter des fonctionnalités au language  
-avec des hacks.*
+avec des hacks*
 
 .footnote[[github.com/n-b/objcswitch](github.com/n-b/objcswitch)]
 
@@ -523,8 +523,12 @@ objcswitch_switch.def :
 	#if __INCLUDE_LEVEL__ < OBJCSWITCH_MAX_CASE_COUNT
 
 	  - (void) case:(id)v :(void (^)(void))b
-	        #include "objcswitch_case.def"
-	        default:(void (^)(void))b;
+	      #include "objcswitch_case.def"
+
+	      default:(void (^)(void))b;
+
+
+
 
 	  #include "objcswitch_switch.def"        // include myself for next method
 
@@ -538,8 +542,12 @@ objcswitch_switch.def :
 	#if __INCLUDE_LEVEL__ < OBJCSWITCH_MAX_CASE_COUNT
 
 	  - (void) case:(id)v :(void (^)(void))b
-	        #include "objcswitch_case.def"
-	        default:(void (^)(void))b;
+	      #include "objcswitch_case.def"
+
+	      default:(void (^)(void))b;
+
+
+
 
 	  #include "objcswitch_switch.def"        // include myself for next method
 
@@ -559,19 +567,43 @@ objcswitch_case.def :
 
 objcswitch_switch.def :
 
-	- (void) case:(id)v :(void (^)(void))b
-	    #include "objcswitch_case.def"
+	#if __INCLUDE_LEVEL__ < OBJCSWITCH_MAX_CASE_COUNT
+
+	  - (void) case:(id)v :(void (^)(void))b
+	      #include "objcswitch_case.def"
 	    #if OBJCSWITCH_DEFAULT_BLOCK
 	      default:(void (^)(void))b;
 	    #else
 	      ;
 	    #endif
 
+	  #include "objcswitch_switch.def"        // include myself for next method
+
+	#endif
+
+---
+# X-Macros
+
+objcswitch_switch.def :
+
+	#if __INCLUDE_LEVEL__ < OBJCSWITCH_MAX_CASE_COUNT
+
+	  - (void) case:(id)v :(void (^)(void))b
+	      #include "objcswitch_case.def"
+	    #if OBJCSWITCH_DEFAULT_BLOCK
+	      default:(void (^)(void))b;
+	    #else
+	      ;
+	    #endif
+
+	  #include "objcswitch_switch.def"        // include myself for next method
+
+	#endif
+
 NSObject+objcswitch.h :
 
 	#define OBJCSWITCH_DEFAULT_BLOCK TRUE
 	#include "objcswitch_switch.def"
-	
 	
 	#define OBJCSWITCH_DEFAULT_BLOCK FALSE
 	#include "objcswitch_switch.def"
@@ -584,16 +616,16 @@ en bonus
 ---
 # Améliorations
 
-Selecteur custom pour la comparaison :
+Selecteur de comparaison :
 
 	[[@"foo" switchUsingSelector:@selector(localizedCompare:)]
 	 case:@"bar" :^{ ... }
 	 case:@"Foo" :^{ ... }
 	 ];
 
-Ou block custom :
+Ou block `NSComparator` :
 
-	[[@"foo" switchUsingComparator:(NSComparator)]
+	[[@"foo" switchUsingComparator:^(id obj1, id obj2) { ... }]
 	 case:@"bar" :^{ ... }
 	 case:@"Foo" :^{ ... }
 	 ];
@@ -642,8 +674,6 @@ Syntaxe avec Objective-C literals
 [Objective-C literals in clang](http://clang.llvm.org/docs/ObjectiveCLiterals.html)  
 
 .footnote[[github.com/n-b/objcswitch](github.com/n-b/objcswitch)]
-
----
 
 
 </textarea><div id="slideshow"></div></body></html>

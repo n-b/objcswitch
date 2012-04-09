@@ -72,7 +72,7 @@ static void objcswitch(ObjcSwitch * self, SEL _cmd, ...);
     if(hasDefaultBlock)
         [types appendFormat:@"%s",@encode(void(^)(void))];
 
-    class_addMethod([self class], aSEL, (IMP) objcswitch, [types cStringUsingEncoding:NSASCIIStringEncoding]);
+    class_addMethod(self, aSEL, (IMP) objcswitch, [types cStringUsingEncoding:NSASCIIStringEncoding]);
     return YES;
 }
 

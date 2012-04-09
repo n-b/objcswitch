@@ -328,8 +328,9 @@ Ajoutée à la demande :
 
 	    // Find out number of arguments in our va_list
 	    const char* selector = sel_getName(_cmd);
-	    BOOL hasDefaultBlock = (strlen(selector) % strlen(CASE__)) != 0;
-	    size_t caseCount = (strlen(selector)-(hasDefaultBlock?strlen(DEFAULT_):0)) / strlen(CASE__);
+	    BOOL hasDefaultBlock = (strlen(selector) % strlen("case::")) != 0;
+	    size_t caseCount = (strlen(selector)-(hasDefaultBlock?strlen("default:"):0))
+		                   / strlen("case::");
 		
 		...
 
@@ -363,7 +364,7 @@ Il ne reste plus qu'à boucler sur les `case:`:
 	        {
 	            block();
 	            goto cleanup;
-	       }
+	        }
 		}
 
 	    if(hasDefaultBlock)
@@ -522,7 +523,7 @@ objcswitch_switch.def :
 	#if __INCLUDE_LEVEL__ < OBJCSWITCH_MAX_CASE_COUNT
 
 	  - (void) case:(id)v :(void (^)(void))b
-	        #include "objcswitch_case.def.h"
+	        #include "objcswitch_case.def"
 	        default:(void (^)(void))b;
 
 	  #include "objcswitch_switch.def"        // include myself for next method
@@ -537,7 +538,7 @@ objcswitch_switch.def :
 	#if __INCLUDE_LEVEL__ < OBJCSWITCH_MAX_CASE_COUNT
 
 	  - (void) case:(id)v :(void (^)(void))b
-	        #include "objcswitch_case.def.h"
+	        #include "objcswitch_case.def"
 	        default:(void (^)(void))b;
 
 	  #include "objcswitch_switch.def"        // include myself for next method
@@ -636,9 +637,9 @@ Syntaxe avec Objective-C literals
 .center.middle
 # Liens
 
-[Objective-C literals in clang](http://clang.llvm.org/docs/ObjectiveCLiterals.html)  
-[X-Macros](http://drdobbs.com/cpp/184401387)  
 [Trampoline Pattern](http://en.wikipedia.org/wiki/Trampoline_%28computing%29)  
+[X-Macros](http://drdobbs.com/cpp/184401387)  
+[Objective-C literals in clang](http://clang.llvm.org/docs/ObjectiveCLiterals.html)  
 
 .footnote[[github.com/n-b/objcswitch](github.com/n-b/objcswitch)]
 

@@ -46,6 +46,9 @@
 ---
 # C-like Switch
 
+Structure similaire au switch C, ou plutôt à l'idée générale du switch : sans les quirks (pas de break, pas de bloc avant le premier case).
+Compatible avec tous les objets objC, utilise "isEqual:".
+
 	.c
 	int i = ...;
 	switch(i){
@@ -71,6 +74,63 @@
 	 case:@123 :^{ ... }
 	 case:@{@"a",@"b"} :^{ ... }
 	 ];
+
+Autre interfaces envisagées :
+* variadiques simples (objet, block, objet, block, etc.)
+	-> pas beau, terminateur nil, pas de "default:", virgule entre objet et block
+* objet "Case" (paire object/block)
+	-> terminateur nil, default possible, [$Case::] syntaxe un peu absconse
+
+Implementation choisie
+-> Objet "Switch" intermediaire
+	-> syntaxe d'appel claire,
+	-> default possible
+	-> pas de variadiques dans l'api, donc pas de terminateur nécessaire,
+-> pas de variadiques dans l'api, mais implémentation définie à l'execution. 
+-> implémentation utilise variadiques
+	-> une seule fonction sert d'implémentation à tous les selecteurs
+-> nécéssité de déclarer toutes les variantes possibles pour éviter les warnings
+	-> gros hack sur les #includes
+
+-> améliorations possibles
+	-> comparaison pas selecteur ou block custom
+	-> options faciles pour les comparaisons de strings (case-insensitive, diacritics-insensitive…)
+	-> parallélisation
+	-> executer tous les blocks YES, pas seulement le premier
+	-> syntaxe LLVM 4 : encore mieux
+	
+--- 
+# Concepts avancés
+
+* Runtime objc
+	* IMP et SEL
+	* "empty" selector names 
+	* sel_getName : it's only a cast if the selector is valid. (selectors are C strings)
+	* hidden arguments (self et _cmd) to method implementations
+	* type encodings ObjC
+		* @encode()
+	* ajout de méthodes à l'execution
+
+* Compiler stuff
+	* __INCLUDE_LEVEL__
+		* #include recursifs
+	* strlen optimisé à la compilation sur les strings statiques
+	* #pragma clang diagnostic push
+
+* C Hack
+	* #include paramétrés -> template programming
+* concept trampoline/HOM/mapreduce
+
+* New in Objective-C 
+	* define ivar in @implementation
+	* @package visibility
+
+* New in C
+	* variadics
+		* in C are passed are regular arguments, you just don't know how many. but they're definitely here in the registers and on the stack with all their static friends.
+		* are an ugly old shit. You can't count them, you can't convert them easily to an array, you can't forward them to another variadic.
+		* using the selector length to decide the number of arguments :  normally, variadics use either a count arg, a sentinel, of format specifiers.
+	* C99-style static C array (with variable length)
 
 ---
 # Objectif

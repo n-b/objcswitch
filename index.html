@@ -44,267 +44,86 @@
 # objcswitch
 
 ---
-# C-like Switch
+# Objectif
 
-Structure similaire au switch C, ou plutôt à l'idée générale du switch : sans les quirks (pas de break, pas de bloc avant le premier case).
-Compatible avec tous les objets objC, utilise "isEqual:".
+* C switch ne gère que les integers statiques
+* idée similaire avec les objets, sans les quirks.
+* Apple ajoute des créations d'objets inline dans LLVM 4, c'est dans le même esprit
 
-	.c
-	int i = ...;
-	switch(i){
-		case 1: ...;
-		case 2: ...;
-		case 3: ...;
-	}
+# Interface choisie
 
-&nbsp;	
+* envisagés : variadiques, objet "Case"
+	* problèmes : pas beau, terminateur nil, pas de "default:", virgule entre objet et block
 
-	.objectivec
-	id obj = ...;
-	[[obj switch]
-	 case:@"a" :^{ ... }
-	 case:@"b" :^{ ... }
-	 case:@"c" :^{ ... }
-	 ];
-&nbsp;
-	.objectivec
-	id obj = ...;
-	[[obj switch]
-	 case:@"abc" :^{ ... }
-	 case:@123 :^{ ... }
-	 case:@{@"a",@"b"} :^{ ... }
-	 ];
+* Implementation choisie
+	* Objet "Switch" intermediaire
+		* concept trampoline/HOM/mapreduce
+		* sert aussi à ne pas polluer NSObject
+		* sert de base pour les extensions eventuelles d'api.
+	* syntaxe d'appel claire,
+	* "default:" possible
+	* pas de variadiques dans l'api, donc pas de terminateur nécessaire.
+	* hack #1: "empty" selector names 
+	* problème : il faut déclarer toutes les variantes de la méthode.
 
-Autre interfaces envisagées :
-* variadiques simples (objet, block, objet, block, etc.)
-	-> pas beau, terminateur nil, pas de "default:", virgule entre objet et block
-* objet "Case" (paire object/block)
-	-> terminateur nil, default possible, [$Case::] syntaxe un peu absconse
+-> show code appels démo et tests
 
-Implementation choisie
--> Objet "Switch" intermediaire
-	-> syntaxe d'appel claire,
-	-> default possible
-	-> pas de variadiques dans l'api, donc pas de terminateur nécessaire,
--> pas de variadiques dans l'api, mais implémentation définie à l'execution. 
--> implémentation utilise variadiques
-	-> une seule fonction sert d'implémentation à tous les selecteurs
--> nécéssité de déclarer toutes les variantes possibles pour éviter les warnings
-	-> gros hack sur les #includes
+---
+# implémentation 
 
--> améliorations possibles
-	-> comparaison pas selecteur ou block custom
-	-> options faciles pour les comparaisons de strings (case-insensitive, diacritics-insensitive…)
-	-> parallélisation
-	-> executer tous les blocks YES, pas seulement le premier
-	-> syntaxe LLVM 4 : encore mieux
-	
---- 
-# Concepts avancés
+* pas de variadiques dans l'api, mais
+	* une seule fonction sert d'implémentation à tous les selecteurs
+	* implémentation utilise variadiques
+	* are an ugly old shit. You can't count them, you can't convert them easily to an array, you can't forward them to another variadic.
+	* variadics in C are passed are regular arguments, you just don't know how many. but they're definitely here on the stack with all their static friends.
+		* au moins sur x86. Je n'ai pas essayé sur ARM et ppc.
+	* using the selector length to decide the number of arguments :  normally, variadics use either a count arg, a sentinel, of format specifiers.
 
-* Runtime objc
+* ObjC Runtime : ajout de méthodes à l'execution :
+	* au moment de l'appel, seulement si la méthode n'existe pas déjà.
+		* à l'appel suivant, c'est bon.
 	* IMP et SEL
-	* "empty" selector names 
 	* sel_getName : it's only a cast if the selector is valid. (selectors are C strings)
 	* hidden arguments (self et _cmd) to method implementations
 	* type encodings ObjC
 		* @encode()
-	* ajout de méthodes à l'execution
 
-* Compiler stuff
+-> show code .m resolveInstanceMethod et objcswitch().
+
+---
+# include hacks
+
+-> nécéssité de déclarer toutes les variantes possibles pour éviter les warnings
+	-> gros hack sur les #includes
+
 	* __INCLUDE_LEVEL__
 		* #include recursifs
+	* #include paramétrés -> template programming
+
+-> show code .h, .def.h
+
+---
+# améliorations possibles
+
+* comparaison par selecteur ou block custom
+* options faciles pour les comparaisons de strings (case-insensitive, diacritics-insensitive…)
+* parallélisation
+* executer tous les blocks YES, pas seulement le premier
+* syntaxe LLVM 4 : encore mieux
+
+---
+# links
+
+github/n-b
+LLVM 4
+parameterized includes
+
+---
+# more hacks
+
 	* strlen optimisé à la compilation sur les strings statiques
 	* #pragma clang diagnostic push
-
-* C Hack
-	* #include paramétrés -> template programming
-* concept trampoline/HOM/mapreduce
-
-* New in Objective-C 
 	* define ivar in @implementation
-	* @package visibility
-
-* New in C
-	* variadics
-		* in C are passed are regular arguments, you just don't know how many. but they're definitely here in the registers and on the stack with all their static friends.
-		* are an ugly old shit. You can't count them, you can't convert them easily to an array, you can't forward them to another variadic.
-		* using the selector length to decide the number of arguments :  normally, variadics use either a count arg, a sentinel, of format specifiers.
 	* C99-style static C array (with variable length)
-
----
-# Objectif
-
-	.objectivec
-	id obj = ...;
-	[[obj switch]
-	 case:... :^{ ... }
-	 ...
-	 default:^{ ... }
-	 ];
-
----
-# Testing
-
-	.objectivec
-    STAssertTrue([[@"foo" switch] respondsToSelector:
-	              @selector(case::default:)], nil);
-&nbsp;
-
-	.objectivec
-    STAssertTrue([[@"foo" switch] respondsToSelector:
-	              @selector(case::case::default:)], nil);
-
----
-# Testing
-
-	.objectivec
-    BOOL __block success = NO;
-	[[@"foo" switch]
-		case:@"bar" :^{ success = NO; }
-		case:@"foo" :^{ success = YES; }
-	];
-    STAssertTrue(success,@"bad!");
-
----
-# Testing
-
-	.objectivec
-	BOOL __block success = NO;
-	[[@"foo" switch]
-		case:@"bar" :^{ success = NO; }
-		case:@"baz" :^{ success = NO; }
-		default:^{ success = YES;}
-	];
-	STAssertTrue(success,nil);
-
----
-# Interface
-
-	.objectivec
-	@class ObjcSwitch;
-
-	// Return the switch object, which implements the actual case::case:: methods
-	@interface NSObject (objcswitch)
-	- (ObjcSwitch *) switch;
-	@end
-
-	@interface ObjcSwitch : NSObject
-	...
-	@end
-
----
-# Implementation
-
-	.objectivec
-	@implementation NSObject (objcswitch)
-	- (ObjcSwitch *) switch
-	{
-	    ObjcSwitch * sw_ = [ObjcSwitch new];
-	    sw_->receiver = self;
-	    return sw_;
-	}
-	@end
-
----
-# resolveInstanceMethod
-
-	.objectivec
-	#define SEL_NAME_TEMPLATE "case::"
-	#define SEL_NAME_SUFFIX "default:"
-	
-	+ (BOOL)resolveInstanceMethod:(SEL)aSEL
-	{
-	    const char* selector_name = sel_getName(aSEL);
-	    size_t sel_name_length = strlen(selector_name);
-
-	    // Check selector is of the form name::name::(etc)(default:)
-	    size_t suffix_length = sel_name_length % SEL_NAME_TEMPLATE_LENGTH;
-	    if(suffix_length!=0)
-	    {
-	        if(sel_name_length>=SEL_NAME_TEMPLATE_LENGTH+SEL_NAME_SUFFIX_LENGTH)
-	            suffix_length += SEL_NAME_TEMPLATE_LENGTH;
-	        if(suffix_length!=SEL_NAME_SUFFIX_LENGTH)
-	            return NO;
-	    }
-    
-	    size_t case_count = (sel_name_length-suffix_length)/SEL_NAME_TEMPLATE_LENGTH;
-	    for(size_t i=0;i<case_count;i++)
-	        if(memcmp(&selector_name[i*SEL_NAME_TEMPLATE_LENGTH], SEL_NAME_TEMPLATE, SEL_NAME_TEMPLATE_LENGTH))
-	            return NO;
-	    if(suffix_length)
-	        if(memcmp(&selector_name[case_count*SEL_NAME_TEMPLATE_LENGTH], SEL_NAME_SUFFIX, SEL_NAME_SUFFIX_LENGTH))
-	            return NO;
-    
-	    // Valid selector. Construct types encoding string.
-	    char types[3+case_count*3+suffix_length?1:0+1];
-	    memcpy(types,"v@:",3);
-	    for(size_t i=0;i<case_count;i++)
-	        memcpy(&types[3+i*3],"@@?",3);
-	    if(suffix_length)
-	        types[3+case_count*3] = '@';
-	    types[3+case_count*3+suffix_length?1:0] = 0;
-    
-	    class_addMethod([self class], aSEL, (IMP) objcswitch, types);
-	    return YES;
-	}
-
-<-- 
-* clang optimizes strlen at compile-time
-* sel_getName returns son argument
-* @encode
-* à l'appel suivant pour le même nombre d'arguments, la méthode existera déjà
-* mais, (IMP) objcswitch ? 
- -fonction C
--->
-
----
-# objcswitch(id,SEL,...)
-
-	.objectivec
-	static void objcswitch(ObjcSwitch * self, SEL _cmd, NSUInteget caseCount, BOOL hasDefaultBlock,...)
-<--
-* refaire une implémentation qui passe en argument le nombre de cas et la présence de défault.
-* ça doit être possible en passant un block??? 
-
-* C variadics
--->
-
----
-# Declaration
-
-	.objectivec
-	#define OBJCSWITCH_MAX_CASE_COUNT 	32
-
-	#define OBJCSWITCH_FIRST_LINE	- (void) case:(id)v :(void (^)(void))b
-	#define OBJCSWITCH_CASE_LINE	         case:(id)v :(void (^)(void))b
-
-	#define OBJCSWITCH_LAST_LINE	      default:(void (^)(void))b;
-		#include "objcswitch_switch.def.h"
-	#undef OBJCSWITCH_LAST_LINE
-	#define OBJCSWITCH_LAST_LINE	      ;
-		#include "objcswitch_switch.def.h"
-&nbsp;
-
-	//objcswitch_switch.def.h
-	#if __INCLUDE_LEVEL__ < OBJCSWITCH_MAX_CASE_COUNT
-	OBJCSWITCH_FIRST_LINE
-	#include "objcswitch_case.def.h"
-	OBJCSWITCH_LAST_LINE
-	#include "objcswitch_switch.def.h"
-	#endif
-&nbsp;
-
-	//objcswitch_case.def.h
-	#if __INCLUDE_LEVEL__ < OBJCSWITCH_MAX_CASE_COUNT
-	OBJCSWITCH_CASE_LINE
-	#include "objcswitch_case.def.h"
-	#endif
-
-<--
-* ne sert qu'à enlever les warnings
-* #pragma clang diagnostic ignored "-Wincomplete-implementation"
-
--->
 
 </textarea><div id="slideshow"></div></body></html>

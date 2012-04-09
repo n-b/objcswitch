@@ -28,6 +28,12 @@ a {
 .position {
 	visibility: hidden;
 }
+.footnote {
+	position: absolute;
+	bottom: 1em;
+	left: 1em;
+	right: 1em;
+}
 </style>
 </head><body><textarea id="source">
 
@@ -36,12 +42,16 @@ a {
 ## Cocoaheads Smalltalk
 # objcswitch
 
+.footnote[[github.com/n-b/objcswitch](github.com/n-b/objcswitch)]
+
 ---
 .center.middle
 ## Cocoaheads Smalltalk
 # objcswitch
 *Comment ajouter des fonctionnalités au language  
 avec des hacks.*
+
+.footnote[[github.com/n-b/objcswitch](github.com/n-b/objcswitch)]
 
 ---
 # Objectif
@@ -59,7 +69,7 @@ Comme les switch C :
 ---
 # Objectif
 
-Avec des objets, mais sans les trucs tordus:
+Avec des objets, mais sans les trucs tordus :
 
 	id obj = ...;
 	switch(obj) {
@@ -72,7 +82,7 @@ Avec des objets, mais sans les trucs tordus:
 ---
 # Objectif
 
-Avec des objets, mais sans les trucs tordus:
+Avec des objets, mais sans les trucs tordus :
 
 	id obj = ...;
 	switch(obj) {
@@ -89,7 +99,7 @@ Avec des objets, mais sans les trucs tordus:
 ---
 # Objectif
 
-Avec des objets, mais sans les trucs tordus:
+Avec des objets, mais sans les trucs tordus :
 
 	id obj = ...;
 	switch(obj) {
@@ -480,15 +490,29 @@ Il faut déclarer toutes les variantes des méthodes :
 
 ---
 .center.middle
-# Templates !
+# <del>Templates !</del>
 
-## `__INCLUDE_LEVEL__`  
+<!--
+Cela dit, il y a des features de C++Ox qui servent à ça.
+-->
 
 ---
 .center.middle
-# Templates !
+# Preprocessor !
 
-## X-Macros
+---
+.center.middle
+# Preprocessor !
+
+`__INCLUDE_LEVEL__` 
+
+---
+.center.middle
+# Preprocessor !
+
+`__INCLUDE_LEVEL__` 
+
+X-Macros
 
 ---
 # #include Récursifs
@@ -615,9 +639,8 @@ Syntaxe avec Objective-C literals
 [Objective-C literals in clang](http://clang.llvm.org/docs/ObjectiveCLiterals.html)  
 [X-Macros](http://drdobbs.com/cpp/184401387)  
 [Trampoline Pattern](http://en.wikipedia.org/wiki/Trampoline_%28computing%29)  
-&nbsp;  
-&nbsp;  
-[github.com/n-b/objcswitch](http://github.com/n-b/objcswitch)
+
+.footnote[[github.com/n-b/objcswitch](github.com/n-b/objcswitch)]
 
 ---
 

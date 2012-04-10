@@ -9,14 +9,12 @@
 /* Begin PBXBuildFile section */
 		372744AD1534197E008AEF72 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 372744AC1534197E008AEF72 /* UIKit.framework */; };
 		372744AE1534197E008AEF72 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37A072EF14C487580094CD27 /* Foundation.framework */; };
-		372744B01534197E008AEF72 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 372744AF1534197E008AEF72 /* CoreGraphics.framework */; };
 		372744B81534197E008AEF72 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 372744B71534197E008AEF72 /* main.m */; };
 		372744C0153419FC008AEF72 /* objcswitch_tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 37A0731414C487BB0094CD27 /* objcswitch_tests.m */; };
-		372744C115341A2D008AEF72 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 372744B71534197E008AEF72 /* main.m */; };
 		372744C215341A63008AEF72 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37A0730514C487BB0094CD27 /* SenTestingKit.framework */; };
+		372744C915341D28008AEF72 /* NSObject+objcswitch.m in Sources */ = {isa = PBXBuildFile; fileRef = 37A072FE14C487960094CD27 /* NSObject+objcswitch.m */; };
 		373D21D114CE13F900C039BF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37A072EF14C487580094CD27 /* Foundation.framework */; };
 		373D21D814CE17D400C039BF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37A072EF14C487580094CD27 /* Foundation.framework */; };
-		373D21E314CE17F500C039BF /* objcswitch_tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 37A0731414C487BB0094CD27 /* objcswitch_tests.m */; };
 		373D21E414CE184800C039BF /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37A0730514C487BB0094CD27 /* SenTestingKit.framework */; };
 		37A0730614C487BB0094CD27 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37A0730514C487BB0094CD27 /* SenTestingKit.framework */; };
 		37A0731514C487BB0094CD27 /* objcswitch_tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 37A0731414C487BB0094CD27 /* objcswitch_tests.m */; };
@@ -39,18 +37,17 @@
 /* Begin PBXFileReference section */
 		371C912E14CDD60400617D4C /* objcswitch_case.def.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = objcswitch_case.def.h; sourceTree = SOURCE_ROOT; };
 		371C912F14CDD61600617D4C /* objcswitch_switch.def.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = objcswitch_switch.def.h; sourceTree = SOURCE_ROOT; };
-		372744AA1534197E008AEF72 /* objcswitch_ios_tests.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = objcswitch_ios_tests.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		372744AA1534197E008AEF72 /* ios_app.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ios_app.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		372744AC1534197E008AEF72 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
-		372744AF1534197E008AEF72 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
-		372744B31534197E008AEF72 /* objcswitch_ios_tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "objcswitch_ios_tests-Info.plist"; path = "objcswitch_ios_tests/objcswitch_ios_tests-Info.plist"; sourceTree = "<group>"; };
-		372744B71534197E008AEF72 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = main.m; path = objcswitch_ios_tests/main.m; sourceTree = "<group>"; };
+		372744B31534197E008AEF72 /* ios_app-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ios_app-Info.plist"; sourceTree = "<group>"; };
+		372744B71534197E008AEF72 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		373D21D614CE17D400C039BF /* test */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = test; path = objcswitch_tests_build; sourceTree = BUILT_PRODUCTS_DIR; };
 		37A072EF14C487580094CD27 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		37A072FD14C487960094CD27 /* NSObject+objcswitch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSObject+objcswitch.h"; sourceTree = SOURCE_ROOT; };
 		37A072FE14C487960094CD27 /* NSObject+objcswitch.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSObject+objcswitch.m"; sourceTree = SOURCE_ROOT; };
 		37A0730414C487BB0094CD27 /* objcswitch_tests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = objcswitch_tests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		37A0730514C487BB0094CD27 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
-		37A0730F14C487BB0094CD27 /* objcswitch_tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "objcswitch_tests-Info.plist"; sourceTree = "<group>"; };
+		37A0730F14C487BB0094CD27 /* tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "tests-Info.plist"; sourceTree = "<group>"; };
 		37A0731414C487BB0094CD27 /* objcswitch_tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = objcswitch_tests.m; sourceTree = "<group>"; };
 		37A0731B14C4CD980094CD27 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
@@ -62,7 +59,6 @@
 			files = (
 				372744AD1534197E008AEF72 /* UIKit.framework in Frameworks */,
 				372744AE1534197E008AEF72 /* Foundation.framework in Frameworks */,
-				372744B01534197E008AEF72 /* CoreGraphics.framework in Frameworks */,
 				372744C215341A63008AEF72 /* SenTestingKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -104,7 +100,7 @@
 			children = (
 				37A0730414C487BB0094CD27 /* objcswitch_tests.octest */,
 				373D21D614CE17D400C039BF /* test */,
-				372744AA1534197E008AEF72 /* objcswitch_ios_tests.app */,
+				372744AA1534197E008AEF72 /* ios_app.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -115,7 +111,6 @@
 				37A072EF14C487580094CD27 /* Foundation.framework */,
 				37A0730514C487BB0094CD27 /* SenTestingKit.framework */,
 				372744AC1534197E008AEF72 /* UIKit.framework */,
-				372744AF1534197E008AEF72 /* CoreGraphics.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -135,9 +130,9 @@
 			isa = PBXGroup;
 			children = (
 				37A0731414C487BB0094CD27 /* objcswitch_tests.m */,
-				37A0730F14C487BB0094CD27 /* objcswitch_tests-Info.plist */,
+				37A0730F14C487BB0094CD27 /* tests-Info.plist */,
 				372744B71534197E008AEF72 /* main.m */,
-				372744B31534197E008AEF72 /* objcswitch_ios_tests-Info.plist */,
+				372744B31534197E008AEF72 /* ios_app-Info.plist */,
 			);
 			name = tests;
 			sourceTree = "<group>";
@@ -145,9 +140,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		372744A91534197E008AEF72 /* objcswitch_ios_tests */ = {
+		372744A91534197E008AEF72 /* ios_app */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 372744BD1534197E008AEF72 /* Build configuration list for PBXNativeTarget "objcswitch_ios_tests" */;
+			buildConfigurationList = 372744BD1534197E008AEF72 /* Build configuration list for PBXNativeTarget "ios_app" */;
 			buildPhases = (
 				372744A61534197E008AEF72 /* Sources */,
 				372744A71534197E008AEF72 /* Frameworks */,
@@ -157,14 +152,14 @@
 			);
 			dependencies = (
 			);
-			name = objcswitch_ios_tests;
+			name = ios_app;
 			productName = objcswitch_ios_tests;
-			productReference = 372744AA1534197E008AEF72 /* objcswitch_ios_tests.app */;
+			productReference = 372744AA1534197E008AEF72 /* ios_app.app */;
 			productType = "com.apple.product-type.application";
 		};
-		373D21D514CE17D400C039BF /* objcswitch_tests_build */ = {
+		373D21D514CE17D400C039BF /* debug_preprocessor_output */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 373D21E014CE17D400C039BF /* Build configuration list for PBXNativeTarget "objcswitch_tests_build" */;
+			buildConfigurationList = 373D21E014CE17D400C039BF /* Build configuration list for PBXNativeTarget "debug_preprocessor_output" */;
 			buildPhases = (
 				373D21D214CE17D400C039BF /* Sources */,
 				373D21D314CE17D400C039BF /* Frameworks */,
@@ -174,7 +169,7 @@
 			);
 			dependencies = (
 			);
-			name = objcswitch_tests_build;
+			name = debug_preprocessor_output;
 			productName = test;
 			productReference = 373D21D614CE17D400C039BF /* test */;
 			productType = "com.apple.product-type.tool";
@@ -218,9 +213,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
+				373D21D514CE17D400C039BF /* debug_preprocessor_output */,
 				37A0730314C487BB0094CD27 /* objcswitch_tests */,
-				373D21D514CE17D400C039BF /* objcswitch_tests_build */,
-				372744A91534197E008AEF72 /* objcswitch_ios_tests */,
+				372744A91534197E008AEF72 /* ios_app */,
 			);
 		};
 /* End PBXProject section */
@@ -273,8 +268,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				373D21E314CE17F500C039BF /* objcswitch_tests.m in Sources */,
-				372744C115341A2D008AEF72 /* main.m in Sources */,
+				372744C915341D28008AEF72 /* NSObject+objcswitch.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -300,7 +294,7 @@
 					"$(SDKROOT)/Developer/Library/Frameworks",
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu99;
-				INFOPLIST_FILE = "objcswitch_ios_tests/objcswitch_ios_tests-Info.plist";
+				INFOPLIST_FILE = "ios_app-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
@@ -318,7 +312,7 @@
 					"$(SDKROOT)/Developer/Library/Frameworks",
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu99;
-				INFOPLIST_FILE = "objcswitch_ios_tests/objcswitch_ios_tests-Info.plist";
+				INFOPLIST_FILE = "ios_app-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
@@ -390,7 +384,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = "$(DEVELOPER_LIBRARY_DIR)/Frameworks";
-				INFOPLIST_FILE = "objcswitch_tests-Info.plist";
+				INFOPLIST_FILE = "tests-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = octest;
 			};
@@ -400,7 +394,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = "$(DEVELOPER_LIBRARY_DIR)/Frameworks";
-				INFOPLIST_FILE = "objcswitch_tests-Info.plist";
+				INFOPLIST_FILE = "tests-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = octest;
 			};
@@ -409,15 +403,16 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		372744BD1534197E008AEF72 /* Build configuration list for PBXNativeTarget "objcswitch_ios_tests" */ = {
+		372744BD1534197E008AEF72 /* Build configuration list for PBXNativeTarget "ios_app" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				372744BE1534197E008AEF72 /* Debug */,
 				372744BF1534197E008AEF72 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
-		373D21E014CE17D400C039BF /* Build configuration list for PBXNativeTarget "objcswitch_tests_build" */ = {
+		373D21E014CE17D400C039BF /* Build configuration list for PBXNativeTarget "debug_preprocessor_output" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				373D21E114CE17D400C039BF /* Debug */,

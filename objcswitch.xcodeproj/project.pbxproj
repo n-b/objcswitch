@@ -7,6 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		372744AD1534197E008AEF72 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 372744AC1534197E008AEF72 /* UIKit.framework */; };
+		372744AE1534197E008AEF72 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37A072EF14C487580094CD27 /* Foundation.framework */; };
+		372744B01534197E008AEF72 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 372744AF1534197E008AEF72 /* CoreGraphics.framework */; };
+		372744B81534197E008AEF72 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 372744B71534197E008AEF72 /* main.m */; };
+		372744C0153419FC008AEF72 /* objcswitch_tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 37A0731414C487BB0094CD27 /* objcswitch_tests.m */; };
+		372744C115341A2D008AEF72 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 372744B71534197E008AEF72 /* main.m */; };
+		372744C215341A63008AEF72 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37A0730514C487BB0094CD27 /* SenTestingKit.framework */; };
 		373D21D114CE13F900C039BF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37A072EF14C487580094CD27 /* Foundation.framework */; };
 		373D21D814CE17D400C039BF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37A072EF14C487580094CD27 /* Foundation.framework */; };
 		373D21E314CE17F500C039BF /* objcswitch_tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 37A0731414C487BB0094CD27 /* objcswitch_tests.m */; };
@@ -32,6 +39,11 @@
 /* Begin PBXFileReference section */
 		371C912E14CDD60400617D4C /* objcswitch_case.def.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = objcswitch_case.def.h; sourceTree = SOURCE_ROOT; };
 		371C912F14CDD61600617D4C /* objcswitch_switch.def.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = objcswitch_switch.def.h; sourceTree = SOURCE_ROOT; };
+		372744AA1534197E008AEF72 /* objcswitch_ios_tests.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = objcswitch_ios_tests.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		372744AC1534197E008AEF72 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
+		372744AF1534197E008AEF72 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
+		372744B31534197E008AEF72 /* objcswitch_ios_tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "objcswitch_ios_tests-Info.plist"; path = "objcswitch_ios_tests/objcswitch_ios_tests-Info.plist"; sourceTree = "<group>"; };
+		372744B71534197E008AEF72 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = main.m; path = objcswitch_ios_tests/main.m; sourceTree = "<group>"; };
 		373D21D614CE17D400C039BF /* test */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = test; path = objcswitch_tests_build; sourceTree = BUILT_PRODUCTS_DIR; };
 		37A072EF14C487580094CD27 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		37A072FD14C487960094CD27 /* NSObject+objcswitch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSObject+objcswitch.h"; sourceTree = SOURCE_ROOT; };
@@ -44,6 +56,17 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		372744A71534197E008AEF72 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				372744AD1534197E008AEF72 /* UIKit.framework in Frameworks */,
+				372744AE1534197E008AEF72 /* Foundation.framework in Frameworks */,
+				372744B01534197E008AEF72 /* CoreGraphics.framework in Frameworks */,
+				372744C215341A63008AEF72 /* SenTestingKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		373D21D314CE17D400C039BF /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -70,7 +93,7 @@
 			children = (
 				37A0731B14C4CD980094CD27 /* README.md */,
 				37A072F114C487580094CD27 /* objcswitch */,
-				37A0730D14C487BB0094CD27 /* objcswitch-tests */,
+				37A0730D14C487BB0094CD27 /* tests */,
 				37A072EE14C487580094CD27 /* Frameworks */,
 				37A072EC14C487580094CD27 /* Products */,
 			);
@@ -81,6 +104,7 @@
 			children = (
 				37A0730414C487BB0094CD27 /* objcswitch_tests.octest */,
 				373D21D614CE17D400C039BF /* test */,
+				372744AA1534197E008AEF72 /* objcswitch_ios_tests.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -90,6 +114,8 @@
 			children = (
 				37A072EF14C487580094CD27 /* Foundation.framework */,
 				37A0730514C487BB0094CD27 /* SenTestingKit.framework */,
+				372744AC1534197E008AEF72 /* UIKit.framework */,
+				372744AF1534197E008AEF72 /* CoreGraphics.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -105,18 +131,37 @@
 			path = objcswitch;
 			sourceTree = "<group>";
 		};
-		37A0730D14C487BB0094CD27 /* objcswitch-tests */ = {
+		37A0730D14C487BB0094CD27 /* tests */ = {
 			isa = PBXGroup;
 			children = (
 				37A0731414C487BB0094CD27 /* objcswitch_tests.m */,
 				37A0730F14C487BB0094CD27 /* objcswitch_tests-Info.plist */,
+				372744B71534197E008AEF72 /* main.m */,
+				372744B31534197E008AEF72 /* objcswitch_ios_tests-Info.plist */,
 			);
-			name = "objcswitch-tests";
+			name = tests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		372744A91534197E008AEF72 /* objcswitch_ios_tests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 372744BD1534197E008AEF72 /* Build configuration list for PBXNativeTarget "objcswitch_ios_tests" */;
+			buildPhases = (
+				372744A61534197E008AEF72 /* Sources */,
+				372744A71534197E008AEF72 /* Frameworks */,
+				372744A81534197E008AEF72 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = objcswitch_ios_tests;
+			productName = objcswitch_ios_tests;
+			productReference = 372744AA1534197E008AEF72 /* objcswitch_ios_tests.app */;
+			productType = "com.apple.product-type.application";
+		};
 		373D21D514CE17D400C039BF /* objcswitch_tests_build */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 373D21E014CE17D400C039BF /* Build configuration list for PBXNativeTarget "objcswitch_tests_build" */;
@@ -175,11 +220,19 @@
 			targets = (
 				37A0730314C487BB0094CD27 /* objcswitch_tests */,
 				373D21D514CE17D400C039BF /* objcswitch_tests_build */,
+				372744A91534197E008AEF72 /* objcswitch_ios_tests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		372744A81534197E008AEF72 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		37A0730114C487BB0094CD27 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -207,11 +260,21 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		372744A61534197E008AEF72 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				372744B81534197E008AEF72 /* main.m in Sources */,
+				372744C0153419FC008AEF72 /* objcswitch_tests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		373D21D214CE17D400C039BF /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				373D21E314CE17F500C039BF /* objcswitch_tests.m in Sources */,
+				372744C115341A2D008AEF72 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -227,6 +290,43 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
+		372744BE1534197E008AEF72 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SDKROOT)/Developer/Library/Frameworks",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				INFOPLIST_FILE = "objcswitch_ios_tests/objcswitch_ios_tests-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		372744BF1534197E008AEF72 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SDKROOT)/Developer/Library/Frameworks",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				INFOPLIST_FILE = "objcswitch_ios_tests/objcswitch_ios_tests-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
 		373D21E114CE17D400C039BF /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -309,6 +409,14 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		372744BD1534197E008AEF72 /* Build configuration list for PBXNativeTarget "objcswitch_ios_tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				372744BE1534197E008AEF72 /* Debug */,
+				372744BF1534197E008AEF72 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
 		373D21E014CE17D400C039BF /* Build configuration list for PBXNativeTarget "objcswitch_tests_build" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

@@ -86,8 +86,3 @@
 }
 
 @end
-
-// Only needed to compile objcswitch_tests_build to use Xcode's "Generate Preprocessed File"
-int main()
-{
-}
